@@ -341,7 +341,8 @@
       "undone": "Geri alındı",
       "failed": "Hata",
       "skipped": "Atlandı"
-    }
+    },
+    "ai": "Yapay zekâ: {{tin}} / {{tout}} token · ${{usd}}"
   },
   "quarantine": {
     "info": "Karantinada {{size}} var.",
@@ -358,5 +359,378 @@
     "complete": "Devam et",
     "undo": "Geri al",
     "inspect": "İncele"
+  },
+  "settings": {
+    "s": {
+      "general": "Genel",
+      "scan": "Tarama",
+      "images": "Fotoğraflar",
+      "dupes": "Kopyalar",
+      "sensitive": "Hassas",
+      "rename": "Adlandırma",
+      "ai": "Yapay zekâ",
+      "apply": "Rapor / Uygulama",
+      "data": "Veri",
+      "categories": "Kategoriler"
+    },
+    "advanced": "Gelişmiş",
+    "reset": "Varsayılanlara dön",
+    "resetTitle": "Ayarlar sıfırlansın mı?",
+    "resetBody": "Tüm ayarlar varsayılana döner. Seçili klasörler, dil ve API anahtarı korunur.",
+    "locked": "(güvenlik için değiştirilemez)",
+    "aiIntro": "Kurallar dosyaların çoğunu kendi başına düzenler. Yapay zekâ yalnızca emin olunamayan dosyalara yardım eder.",
+    "providerDesc": {
+      "none": "Ücretsiz, çevrimdışı.",
+      "anthropic": "Hızlı, çok iyi; ~1 sent / 50 dosya.",
+      "lmstudio": "Yerel, ücretsiz; daha yavaş."
+    },
+    "apiKey": "Anthropic API anahtarı",
+    "apiKeyDesc": "İşletim sisteminin anahtar zincirinde şifreli saklanır.",
+    "apiKeySaved": "Kayıtlı (şifreli). Değiştirmek için yenisini yazın.",
+    "noEncryption": "Bu sistemde güvenli saklama kullanılamıyor; anahtar kaydedilemez.",
+    "pickModel": "Model seçin",
+    "noModels": "Model bulunamadı (LM Studio açık mı?)",
+    "lanWarning": "Bu adres başka bir bilgisayarda: dosya bilgileri yerel ağda dolaşır.",
+    "testConnection": "Bağlantıyı sına",
+    "testOk": "Bağlantı tamam ({{model}})",
+    "sensitiveNote": "Hassas dosyalar hiçbir zaman buluta gönderilmez; bu ayar kapatılamaz.",
+    "clearCache": "Önbelleği temizle",
+    "cacheCleared": "{{thumbs}} önizleme ve {{ai}} yapay zekâ sonucu silindi.",
+    "openLogs": "Günlükleri aç",
+    "openData": "Veri klasörünü göster",
+    "f": {
+      "language": {
+        "label": "Dil",
+        "desc": "Arayüz dili."
+      },
+      "theme": {
+        "label": "Tema",
+        "desc": "Açık, koyu ya da sistemle aynı."
+      },
+      "targetMode": {
+        "label": "Hedef",
+        "desc": "Her klasörü kendi içinde mi düzenleyeyim, yoksa hepsini tek bir yere mi toplayayım?"
+      },
+      "targetRoot": {
+        "label": "Tek hedef klasör",
+        "desc": "Yalnızca \"tek hedef\" seçiliyse; seçili klasörlerden birinin içinde olmalı."
+      },
+      "quarantineFolderName": {
+        "label": "Karantina klasörünün adı",
+        "desc": "Kopyalar ve kaldırılanlar her kökün içinde bu klasöre gider."
+      },
+      "useOsTrashInsteadOfQuarantine": {
+        "label": "Karantina yerine işletim sistemi çöpü",
+        "desc": "Çöpe gidenler Geçmiş'ten otomatik geri alınamaz."
+      },
+      "removeEmptyFoldersCreatedByDondu": {
+        "label": "Boş kalan Döndü klasörlerini kaldır",
+        "desc": "Yalnızca Döndü'nün o çalıştırmada oluşturduğu klasörler."
+      },
+      "quarantineEmptySourceFolders": {
+        "label": "Boş kalan kaynak klasörleri karantinaya taşı",
+        "desc": "Sizin klasörleriniz boş kalırsa karantinaya gider (silinmez)."
+      },
+      "scan": {
+        "includeHidden": {
+          "label": "Gizli dosyaları da tara",
+          "desc": "Nokta ile başlayan dosyalar."
+        },
+        "maxDepth": {
+          "label": "En fazla klasör derinliği"
+        },
+        "maxFileSizeForContentMB": {
+          "label": "İçerik okuma üst sınırı (MB)",
+          "desc": "Daha büyük dosyaların içine bakılmaz."
+        },
+        "maxTextExcerptChars": {
+          "label": "Metin alıntısı uzunluğu",
+          "desc": "Belge başına okunan karakter."
+        },
+        "treatProjectFoldersAsUnit": {
+          "label": "Proje klasörlerini bütün olarak ele al",
+          "desc": ".git, package.json vb. içeren klasörlere girilmez."
+        },
+        "minFileSizeKB": {
+          "label": "Çok küçük dosya sınırı (KB)",
+          "desc": "Altındakiler \"çöp adayı\" sayılır. 0 = kapalı."
+        },
+        "hashWorkers": {
+          "label": "Paralel çalışan sayısı",
+          "desc": "0 = otomatik (işlemci sayısına göre)."
+        },
+        "excludeGlobs": {
+          "label": "Dışlananlar",
+          "desc": "Her satıra bir kalıp, ör. **/node_modules/**"
+        }
+      },
+      "images": {
+        "analyzeWithAI": {
+          "label": "Görselleri yapay zekâya küçük önizlemeyle gönder",
+          "desc": "Kapalıysa yalnızca ad ve EXIF kullanılır."
+        },
+        "thumbnailMaxEdge": {
+          "label": "Önizleme boyutu (piksel)",
+          "desc": "Büyüdükçe doğruluk ve maliyet artar."
+        },
+        "groupBy": {
+          "label": "Fotoğrafları grupla"
+        },
+        "detectScreenshots": {
+          "label": "Ekran görüntülerini ayır",
+          "desc": "Ada ve boyuta göre."
+        },
+        "screenshotTarget": {
+          "label": "Ekran görüntüsü klasörü",
+          "desc": "{Yıl}, {Ay} kullanılabilir."
+        },
+        "nearDuplicateThreshold": {
+          "label": "Benzer görsel eşiği",
+          "desc": "Küçük sayı = daha katı."
+        },
+        "keepHeicJpgSiblingsTogether": {
+          "label": "HEIC ve JPG eşlerini birlikte tut"
+        },
+        "useExifDateForFolder": {
+          "label": "Klasör için çekim tarihini kullan",
+          "desc": "EXIF yoksa dosya tarihi."
+        }
+      },
+      "dupes": {
+        "enabled": {
+          "label": "Kopyaları bul"
+        },
+        "keepPolicy": {
+          "label": "Hangisi kalsın?"
+        },
+        "preferredFolderOrder": {
+          "label": "Tercih edilen klasör sırası",
+          "desc": "Her satıra bir klasör adı; üstteki önce tutulur."
+        },
+        "action": {
+          "label": "Kopyalar ne olsun?"
+        },
+        "minSizeKB": {
+          "label": "En küçük kopya boyutu (KB)"
+        },
+        "includeNearDuplicateImages": {
+          "label": "Çok benzer görselleri de göster",
+          "desc": "Ayrı grupta, varsayılan olarak atlanır."
+        }
+      },
+      "sensitive": {
+        "enabled": {
+          "label": "Hassas dosya tespiti"
+        },
+        "neverSendToCloud": {
+          "label": "Hassas dosyalar buluta gitmez"
+        },
+        "contentScan": {
+          "label": "İçerikte kimlik/IBAN/kart numarası ara",
+          "desc": "TC kimlik, IBAN, kart, HETU."
+        },
+        "skipByDefault": {
+          "label": "Hassas dosyaları varsayılan olarak atla"
+        },
+        "extraNamePatterns": {
+          "label": "Ek hassas ad kalıpları",
+          "desc": "Her satıra bir kelime."
+        },
+        "extraExtensions": {
+          "label": "Ek hassas uzantılar",
+          "desc": "Her satıra bir uzantı."
+        }
+      },
+      "rename": {
+        "enabled": {
+          "label": "Dosyaları yeniden adlandır",
+          "desc": "Kapalıyken adlar hiç değişmez."
+        },
+        "template": {
+          "label": "Ad şablonu",
+          "desc": "{date}, {title}, {orig}"
+        },
+        "minConfidence": {
+          "label": "En düşük güven",
+          "desc": "Bunun altında ad değişmez."
+        },
+        "onlyGenericNames": {
+          "label": "Yalnızca anlamsız adlar",
+          "desc": "IMG_1234, Belge (3), Untitled gibi."
+        },
+        "photos": {
+          "label": "Fotoğraf adlarını da değiştir"
+        }
+      },
+      "ai": {
+        "provider": {
+          "label": "Sağlayıcı"
+        },
+        "anthropic": {
+          "model": {
+            "label": "Model",
+            "desc": "Varsayılan: claude-haiku-5-5"
+          },
+          "effort": {
+            "label": "Çaba",
+            "desc": "Sınıflandırma için \"düşük\" yeterli."
+          },
+          "useBatchApi": {
+            "label": "Ekonomik mod (toplu istek)",
+            "desc": "%50 daha ucuz, birkaç dakika sürebilir."
+          }
+        },
+        "lmstudio": {
+          "baseUrl": {
+            "label": "LM Studio adresi",
+            "desc": "Varsayılan: http://localhost:1234/v1"
+          },
+          "model": {
+            "label": "Model",
+            "desc": "LM Studio'da yüklü modeller."
+          },
+          "vision": {
+            "label": "Bu model görselleri anlıyor",
+            "desc": "Gemma 3, Qwen-VL, LLaVA gibi."
+          }
+        },
+        "mode": {
+          "label": "Hangi dosyalar gönderilsin?"
+        },
+        "ruleConfidenceThreshold": {
+          "label": "Kural güven eşiği",
+          "desc": "Kuralların bundan emin olduğu dosyalar gönderilmez."
+        },
+        "batchSize": {
+          "label": "İstek başına dosya"
+        },
+        "maxUsdPerRun": {
+          "label": "Çalıştırma başına üst sınır ($)",
+          "desc": "Tahmin aşarsa başlamaz."
+        },
+        "maxTokensPerRun": {
+          "label": "Çalıştırma başına token sınırı"
+        },
+        "cacheEnabled": {
+          "label": "Sonuçları önbellekle",
+          "desc": "Aynı dosya için ikinci kez ödeme yok."
+        },
+        "learnFromCorrections": {
+          "label": "Düzeltmelerimden öğren"
+        }
+      },
+      "report": {
+        "lowConfidenceThreshold": {
+          "label": "\"Gözden geçir\" eşiği",
+          "desc": "Bunun altındakiler varsayılan olarak atlanır."
+        },
+        "exportIncludesExcerpts": {
+          "label": "Dışa aktarılan rapora alıntıları ekle",
+          "desc": "Hassas dosyalar hiç eklenmez."
+        }
+      },
+      "apply": {
+        "pauseOnFirstError": {
+          "label": "İlk hatada dur ve sor"
+        },
+        "doubleConfirmAbove": {
+          "label": "İkinci onay sınırı",
+          "desc": "Bundan çok dosyada bir kez daha sorar."
+        },
+        "verifyHashAfterCopy": {
+          "label": "Kopyadan sonra doğrula",
+          "desc": "Farklı diske taşırken her zaman açık."
+        }
+      },
+      "history": {
+        "keepRunsDays": {
+          "label": "Geçmişi sakla (gün)"
+        },
+        "quarantineReminderDays": {
+          "label": "Karantina hatırlatması (gün)"
+        }
+      },
+      "cache": {
+        "thumbnails": {
+          "label": "Küçük önizlemeleri sakla"
+        }
+      },
+      "logs": {
+        "level": {
+          "label": "Günlük ayrıntısı",
+          "desc": "İçerik ve anahtarlar hiçbir zaman yazılmaz."
+        }
+      }
+    },
+    "o": {
+      "language": {
+        "tr": "Türkçe",
+        "en": "English"
+      },
+      "theme": {
+        "system": "Sistem",
+        "light": "Açık",
+        "dark": "Koyu"
+      },
+      "targetMode": {
+        "inPlace": "Her klasör kendi içinde",
+        "singleTarget": "Hepsi tek hedefte"
+      },
+      "images": {
+        "groupBy": {
+          "year": "Yıl",
+          "yearMonth": "Yıl / Ay",
+          "event": "Etkinlik (3 saat ara)"
+        }
+      },
+      "dupes": {
+        "keepPolicy": {
+          "preferredFolder": "Tercih edilen klasördeki",
+          "oldest": "En eski",
+          "newest": "En yeni",
+          "shortestPath": "En kısa yoldaki"
+        },
+        "action": {
+          "quarantine": "Karantinaya",
+          "trash": "Çöpe",
+          "reportOnly": "Yalnızca raporla"
+        }
+      },
+      "ai": {
+        "anthropic": {
+          "effort": {
+            "low": "Düşük",
+            "medium": "Orta"
+          }
+        },
+        "mode": {
+          "uncertainOnly": "Yalnızca kuralların emin olmadıkları",
+          "all": "Hepsi (zengin analiz)",
+          "metadataOnly": "Yalnızca ad ve meta veri"
+        }
+      },
+      "logs": {
+        "level": {
+          "error": "Yalnızca hatalar",
+          "info": "Normal",
+          "debug": "Ayrıntılı"
+        }
+      }
+    }
+  },
+  "categories": {
+    "intro": "Döndü dosyaları bu kategorilere ayırır. Yapay zekâ da yalnızca bu listeden seçer.",
+    "enabled": "{{name}} etkin",
+    "custom": "Özel",
+    "edit": "Düzenle",
+    "add": "Kategori ekle",
+    "reset": "Varsayılan kategorilere dön",
+    "resetBody": "Eklediğiniz kategoriler silinir, varsayılanlar geri gelir.",
+    "templateHelp": "Klasör şablonunda {Yıl}, {Ay}, {Kategori} ve {Kök} kullanılabilir.",
+    "nameTr": "Ad (Türkçe)",
+    "nameEn": "Ad (İngilizce)",
+    "template": "Klasör şablonu",
+    "description": "Açıklama (yapay zekâ için)",
+    "examples": "Örnekler (virgülle)"
   }
 }

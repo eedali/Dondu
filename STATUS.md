@@ -4,7 +4,7 @@
 
 ## Şu anki faz
 
-**Faz 3 — Yapay zekâ** (sırada)
+**Faz 4 — Ayarlar, onboarding, cila** (sırada)
 
 ## Yapıldı
 
@@ -15,9 +15,11 @@
 
 - Faz 2 — AI'sız MVP: ayarlar (zod + JSON + safeStorage), taksonomi seed'i; kural motoru (ekran görüntüsü TR/EN/FI/DE, EXIF, anahtar kelimeler TR/FI/EN, çöp, paket/proje); kopyalar (blake3 kesin, dHash yakın, HEIC/JPG kardeş, keepPolicy); naming (sanitize, şablon, ` (2)` çakışma, iki adımlı harf büyüklüğü); deterministik planner; Rapor (sekmeler, gruplar, satır/grup düzenleme, detay paneli, filtreler, HTML/MD/JSON dışa aktarma); onay akışı (ikinci onay, ön kontrol, değişen dosyaları atla); write-ahead journal ile applier (aynı birim rename, farklı birim kopya+blake3+karantina, mkdir takibi, boş kalan Döndü klasörlerini kaldırma, duraklat/iptal, ilk hatada dur); undo (çalıştırma/öğe, "(geri alındı)", değişen dosyada sor, undo'nun undo'su = yeniden uygula); açılış toparlaması + "yarım kalan işlem" diyaloğu; Geçmiş + karantina boşaltma (OS çöpü). Testler: round-trip, çökme, devam, çakışma, değişen kaynak, kök dışı, harf büyüklüğü, NFD/NFC, duraklat; birim: naming/rules/dupes/planner/sensitive
 
+- Faz 3 — Yapay zekâ: `AIProvider` arayüzü; AnthropicProvider (`claude-haiku-5-5`, `temperature/top_p/top_k` yok, `output_config.effort`, zorunlu `classify_files` aracı, sistem istemi `cache_control`, base64 görseller, 429/529 → geri çekilme, Message Batches seçeneği); LmStudioProvider (fetch, `/models`, `json_schema`, anlaşılır hata); FakeProvider; BatchRunner (parti, eşzamanlılık, iptal, ilerleme, önbellek `hash|PROMPT_VERSION|provider|model|taksonomi|mod`); maliyet tahmini (docs/03 §7) + plan öncesi tahmin diyaloğu + limit; hassas kapısı (bulut sağlayıcıya ad bile gitmez); düzeltmelerden öğrenme (corrections → istem örnekleri + planner); Ayarlar ekranı (tüm docs/06 bölümleri, Basit/Gelişmiş, Yapay zekâ bölümü, bağlantı testi, kategori düzenleyici, önbellek/log). Geçmişte gerçek token/$.
+
 ## Sırada
 
-1. Faz 3: AIProvider, Anthropic (Haiku 5.5), LM Studio, maliyet tahmini, önbellek, hassas kapısı
+1. Faz 4: onboarding, yardım sayfaları, boş/hata durumları, klavye, performans ölçümü
 
 ## Bilinen sorunlar / açık kararlar
 
@@ -27,8 +29,10 @@
 - Değişen kaynak dosyalar ön kontrolde yalnızca "atla" ile geçilebiliyor (doc "yine de uygula" seçeneği öneriyor; güvenlik için şimdilik yok)
 - `apply.concurrency` ayarı okunuyor ama uygulama şimdilik hep sıralı (güvenli varsayılan)
 - Diskteki ham ad NFC'den farklıysa (`rel_path_raw`) o yazımla taşınır; Windows'ta NFD adlar da çalışır
+- Canlı API testi (`DONDU_LIVE_AI=1` + `ANTHROPIC_API_KEY`) bu makinede anahtar olmadığı için çalıştırılmadı; istek biçimi sahte fetch ile test edildi
+- Haiku 5.5'te zorunlu `tool_choice` kabul ediliyor (düşünme o yanıtta atlanır); `strict: true` şemadaki `maxLength/pattern` yüzünden kullanılmadı, çıktı zod ile doğrulanıyor
 - PDF için `pdf-parse` yerine doğrudan `pdfjs-dist` kullanıldı (pdf-parse v2 native `@napi-rs/canvas` istiyor)
 
 ## Son güncelleme
 
-2026-10-15 — Faz 2 tamamlandı
+2026-10-15 — Faz 3 tamamlandı

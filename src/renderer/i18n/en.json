@@ -341,7 +341,8 @@
       "undone": "Undone",
       "failed": "Error",
       "skipped": "Skipped"
-    }
+    },
+    "ai": "AI: {{tin}} / {{tout}} tokens · ${{usd}}"
   },
   "quarantine": {
     "info": "{{size}} in quarantine.",
@@ -358,5 +359,378 @@
     "complete": "Continue",
     "undo": "Undo",
     "inspect": "Inspect"
+  },
+  "settings": {
+    "s": {
+      "general": "General",
+      "scan": "Scanning",
+      "images": "Photos",
+      "dupes": "Duplicates",
+      "sensitive": "Sensitive",
+      "rename": "Naming",
+      "ai": "AI",
+      "apply": "Report / Apply",
+      "data": "Data",
+      "categories": "Categories"
+    },
+    "advanced": "Advanced",
+    "reset": "Restore defaults",
+    "resetTitle": "Reset settings?",
+    "resetBody": "All settings go back to defaults. Selected folders, language and the API key are kept.",
+    "locked": "(cannot be changed, for safety)",
+    "aiIntro": "The rules sort most files on their own. AI only helps with the files they are unsure about.",
+    "providerDesc": {
+      "none": "Free, offline.",
+      "anthropic": "Fast, very good; ~1 cent / 50 files.",
+      "lmstudio": "Local, free; slower."
+    },
+    "apiKey": "Anthropic API key",
+    "apiKeyDesc": "Stored encrypted in the system keychain.",
+    "apiKeySaved": "Saved (encrypted). Type a new one to replace it.",
+    "noEncryption": "Secure storage is not available on this system; the key cannot be saved.",
+    "pickModel": "Choose a model",
+    "noModels": "No models found (is LM Studio running?)",
+    "lanWarning": "This address is another computer: file details travel over your local network.",
+    "testConnection": "Test connection",
+    "testOk": "Connection OK ({{model}})",
+    "sensitiveNote": "Sensitive files are never sent to the cloud; this cannot be turned off.",
+    "clearCache": "Clear cache",
+    "cacheCleared": "{{thumbs}} previews and {{ai}} AI results removed.",
+    "openLogs": "Open logs",
+    "openData": "Show data folder",
+    "f": {
+      "language": {
+        "label": "Language",
+        "desc": "Interface language."
+      },
+      "theme": {
+        "label": "Theme",
+        "desc": "Light, dark or follow the system."
+      },
+      "targetMode": {
+        "label": "Target",
+        "desc": "Tidy each folder in place, or gather everything in one place?"
+      },
+      "targetRoot": {
+        "label": "Single target folder",
+        "desc": "Only for \"single target\"; must be inside one of the selected folders."
+      },
+      "quarantineFolderName": {
+        "label": "Quarantine folder name",
+        "desc": "Duplicates and removed items go to this folder inside each root."
+      },
+      "useOsTrashInsteadOfQuarantine": {
+        "label": "System trash instead of quarantine",
+        "desc": "Items in the trash cannot be restored automatically from History."
+      },
+      "removeEmptyFoldersCreatedByDondu": {
+        "label": "Remove empty folders Döndü created",
+        "desc": "Only folders Döndü created in that run."
+      },
+      "quarantineEmptySourceFolders": {
+        "label": "Move emptied source folders to quarantine",
+        "desc": "Your folders that end up empty go to quarantine (never deleted)."
+      },
+      "scan": {
+        "includeHidden": {
+          "label": "Include hidden files",
+          "desc": "Files starting with a dot."
+        },
+        "maxDepth": {
+          "label": "Maximum folder depth"
+        },
+        "maxFileSizeForContentMB": {
+          "label": "Content size limit (MB)",
+          "desc": "Larger files are not opened."
+        },
+        "maxTextExcerptChars": {
+          "label": "Text excerpt length",
+          "desc": "Characters read per document."
+        },
+        "treatProjectFoldersAsUnit": {
+          "label": "Treat project folders as a unit",
+          "desc": "Folders with .git, package.json etc. are not entered."
+        },
+        "minFileSizeKB": {
+          "label": "Tiny file limit (KB)",
+          "desc": "Smaller files are \"junk candidates\". 0 = off."
+        },
+        "hashWorkers": {
+          "label": "Parallel workers",
+          "desc": "0 = automatic (based on CPU count)."
+        },
+        "excludeGlobs": {
+          "label": "Exclusions",
+          "desc": "One pattern per line, e.g. **/node_modules/**"
+        }
+      },
+      "images": {
+        "analyzeWithAI": {
+          "label": "Send images to AI as small previews",
+          "desc": "When off, only name and EXIF are used."
+        },
+        "thumbnailMaxEdge": {
+          "label": "Preview size (pixels)",
+          "desc": "Larger is more accurate and costs more."
+        },
+        "groupBy": {
+          "label": "Group photos by"
+        },
+        "detectScreenshots": {
+          "label": "Separate screenshots",
+          "desc": "By name and size."
+        },
+        "screenshotTarget": {
+          "label": "Screenshot folder",
+          "desc": "{Yıl} and {Ay} can be used."
+        },
+        "nearDuplicateThreshold": {
+          "label": "Similar image threshold",
+          "desc": "Smaller = stricter."
+        },
+        "keepHeicJpgSiblingsTogether": {
+          "label": "Keep HEIC and JPG pairs together"
+        },
+        "useExifDateForFolder": {
+          "label": "Use capture date for folders",
+          "desc": "File date when there is no EXIF."
+        }
+      },
+      "dupes": {
+        "enabled": {
+          "label": "Find duplicates"
+        },
+        "keepPolicy": {
+          "label": "Which one stays?"
+        },
+        "preferredFolderOrder": {
+          "label": "Preferred folder order",
+          "desc": "One folder name per line; earlier ones are kept first."
+        },
+        "action": {
+          "label": "What happens to duplicates?"
+        },
+        "minSizeKB": {
+          "label": "Minimum duplicate size (KB)"
+        },
+        "includeNearDuplicateImages": {
+          "label": "Show very similar images too",
+          "desc": "In a separate group, skipped by default."
+        }
+      },
+      "sensitive": {
+        "enabled": {
+          "label": "Sensitive file detection"
+        },
+        "neverSendToCloud": {
+          "label": "Sensitive files never go to the cloud"
+        },
+        "contentScan": {
+          "label": "Scan content for ID/IBAN/card numbers",
+          "desc": "Turkish ID, IBAN, card, Finnish HETU."
+        },
+        "skipByDefault": {
+          "label": "Skip sensitive files by default"
+        },
+        "extraNamePatterns": {
+          "label": "Extra sensitive name patterns",
+          "desc": "One word per line."
+        },
+        "extraExtensions": {
+          "label": "Extra sensitive extensions",
+          "desc": "One extension per line."
+        }
+      },
+      "rename": {
+        "enabled": {
+          "label": "Rename files",
+          "desc": "When off, names never change."
+        },
+        "template": {
+          "label": "Name template",
+          "desc": "{date}, {title}, {orig}"
+        },
+        "minConfidence": {
+          "label": "Minimum confidence",
+          "desc": "Below this, names are kept."
+        },
+        "onlyGenericNames": {
+          "label": "Only generic names",
+          "desc": "Like IMG_1234, Document (3), Untitled."
+        },
+        "photos": {
+          "label": "Rename photos too"
+        }
+      },
+      "ai": {
+        "provider": {
+          "label": "Provider"
+        },
+        "anthropic": {
+          "model": {
+            "label": "Model",
+            "desc": "Default: claude-haiku-5-5"
+          },
+          "effort": {
+            "label": "Effort",
+            "desc": "\"Low\" is enough for classification."
+          },
+          "useBatchApi": {
+            "label": "Economy mode (batch)",
+            "desc": "50% cheaper, may take a few minutes."
+          }
+        },
+        "lmstudio": {
+          "baseUrl": {
+            "label": "LM Studio address",
+            "desc": "Default: http://localhost:1234/v1"
+          },
+          "model": {
+            "label": "Model",
+            "desc": "Models loaded in LM Studio."
+          },
+          "vision": {
+            "label": "This model understands images",
+            "desc": "Like Gemma 3, Qwen-VL, LLaVA."
+          }
+        },
+        "mode": {
+          "label": "Which files are sent?"
+        },
+        "ruleConfidenceThreshold": {
+          "label": "Rule confidence threshold",
+          "desc": "Files the rules are this sure about are not sent."
+        },
+        "batchSize": {
+          "label": "Files per request"
+        },
+        "maxUsdPerRun": {
+          "label": "Per-run limit ($)",
+          "desc": "Does not start if the estimate is higher."
+        },
+        "maxTokensPerRun": {
+          "label": "Per-run token limit"
+        },
+        "cacheEnabled": {
+          "label": "Cache results",
+          "desc": "No second charge for the same file."
+        },
+        "learnFromCorrections": {
+          "label": "Learn from my corrections"
+        }
+      },
+      "report": {
+        "lowConfidenceThreshold": {
+          "label": "\"Review\" threshold",
+          "desc": "Items below this are skipped by default."
+        },
+        "exportIncludesExcerpts": {
+          "label": "Include excerpts in exported reports",
+          "desc": "Sensitive files are never included."
+        }
+      },
+      "apply": {
+        "pauseOnFirstError": {
+          "label": "Stop and ask on the first error"
+        },
+        "doubleConfirmAbove": {
+          "label": "Second confirmation above",
+          "desc": "Asks once more above this many files."
+        },
+        "verifyHashAfterCopy": {
+          "label": "Verify after copying",
+          "desc": "Always on when moving across drives."
+        }
+      },
+      "history": {
+        "keepRunsDays": {
+          "label": "Keep history (days)"
+        },
+        "quarantineReminderDays": {
+          "label": "Quarantine reminder (days)"
+        }
+      },
+      "cache": {
+        "thumbnails": {
+          "label": "Keep thumbnails"
+        }
+      },
+      "logs": {
+        "level": {
+          "label": "Log detail",
+          "desc": "Contents and keys are never written."
+        }
+      }
+    },
+    "o": {
+      "language": {
+        "tr": "Türkçe",
+        "en": "English"
+      },
+      "theme": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "targetMode": {
+        "inPlace": "Each folder in place",
+        "singleTarget": "All in one target"
+      },
+      "images": {
+        "groupBy": {
+          "year": "Year",
+          "yearMonth": "Year / Month",
+          "event": "Event (3h gap)"
+        }
+      },
+      "dupes": {
+        "keepPolicy": {
+          "preferredFolder": "The one in the preferred folder",
+          "oldest": "Oldest",
+          "newest": "Newest",
+          "shortestPath": "Shortest path"
+        },
+        "action": {
+          "quarantine": "To quarantine",
+          "trash": "To trash",
+          "reportOnly": "Report only"
+        }
+      },
+      "ai": {
+        "anthropic": {
+          "effort": {
+            "low": "Low",
+            "medium": "Medium"
+          }
+        },
+        "mode": {
+          "uncertainOnly": "Only files the rules are unsure about",
+          "all": "All (rich analysis)",
+          "metadataOnly": "Name and metadata only"
+        }
+      },
+      "logs": {
+        "level": {
+          "error": "Errors only",
+          "info": "Normal",
+          "debug": "Detailed"
+        }
+      }
+    }
+  },
+  "categories": {
+    "intro": "Döndü sorts files into these categories. The AI also chooses only from this list.",
+    "enabled": "{{name}} enabled",
+    "custom": "Custom",
+    "edit": "Edit",
+    "add": "Add category",
+    "reset": "Restore default categories",
+    "resetBody": "Categories you added are removed and the defaults come back.",
+    "templateHelp": "Folder templates can use {Yıl}, {Ay}, {Kategori} and {Kök}.",
+    "nameTr": "Name (Turkish)",
+    "nameEn": "Name (English)",
+    "template": "Folder template",
+    "description": "Description (for the AI)",
+    "examples": "Examples (comma separated)"
   }
 }

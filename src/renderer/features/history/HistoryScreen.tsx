@@ -134,6 +134,15 @@ function RunCard({
         <div className="shrink-0 text-right text-[13px] text-muted">
           <div>{t('history.counts', { done: s.done, skipped: s.skipped, failed: s.failed })}</div>
           {s.bytes > 0 && <div>{formatBytes(s.bytes, locale)}</div>}
+          {run.ai && run.ai.tokensIn > 0 && (
+            <div>
+              {t('history.ai', {
+                tin: run.ai.tokensIn.toLocaleString(locale),
+                tout: run.ai.tokensOut.toLocaleString(locale),
+                usd: run.ai.usd.toFixed(4),
+              })}
+            </div>
+          )}
         </div>
       </button>
       {open && (

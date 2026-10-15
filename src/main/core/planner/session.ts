@@ -28,6 +28,7 @@ export function planFromSession(
     settings,
     categories: repos.categories.all(),
     ai,
+    corrections: settings.ai.learnFromCorrections ? repos.corrections.recent(200) : [],
     exists: (p) => fs.existsSync(p),
   })
   if (aiSummary) plan.summary.ai = aiSummary

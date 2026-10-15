@@ -10,6 +10,7 @@ import { ReportScreen } from '../features/report/ReportScreen'
 import { ApplyScreen } from '../features/apply/ApplyScreen'
 import { RecoveryDialog } from '../features/apply/RecoveryDialog'
 import { HistoryScreen } from '../features/history/HistoryScreen'
+import { SettingsScreen } from '../features/settings/SettingsScreen'
 
 export function App(): React.JSX.Element {
   const { i18n } = useTranslation()
@@ -43,6 +44,8 @@ export function App(): React.JSX.Element {
         return <ApplyScreen />
       case 'history':
         return <HistoryScreen />
+      case 'settings':
+        return <SettingsScreen />
       default:
         return <Placeholder />
     }

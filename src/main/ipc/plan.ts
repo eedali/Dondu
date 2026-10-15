@@ -11,6 +11,7 @@ import {
   startApply,
   undo,
 } from '../services/apply'
+import { estimateForSession, listLmStudioModels, testProvider } from '../services/ai'
 import { buildPlanForSession, cancelPlanBuild, exportPlan } from '../services/plan'
 import { listQuarantine, trashQuarantine } from '../services/quarantine'
 import type { Plan } from '@shared/types'
@@ -61,6 +62,10 @@ export function registerPlanIpc(): void {
     if (!plan) throw new Error('plan not found')
     return preflight(plan, c.repos, platform(), c.settings.get())
   })
+
+  handle('ai:estimate', (sessionId) => estimateForSession(sessionId))
+  handle('ai:test', () => testProvider())
+  handle('ai:models', () => listLmStudioModels())
 
   handle('apply:start', (planId, opts) => startApply(planId, opts))
   handle('apply:pause', () => pauseApply())

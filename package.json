@@ -20,6 +20,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.134.0",
     "better-sqlite3": "^13.0.3",
     "electron-log": "^5.4.4",
     "exifr": "^7.1.3",

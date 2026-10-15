@@ -231,6 +231,13 @@ export async function applyPlan(
     status: 'running',
     stats,
     roots: plan.roots,
+    ai: plan.summary.ai
+      ? {
+          tokensIn: plan.summary.ai.tokensIn,
+          tokensOut: plan.summary.ai.tokensOut,
+          usd: plan.summary.ai.usd,
+        }
+      : undefined,
   })
   repos.plans.setStatus(planId, 'applying')
 

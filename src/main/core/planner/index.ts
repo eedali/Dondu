@@ -21,7 +21,8 @@ import {
   uniquePath,
 } from '../naming'
 import { absOf, isInside, pathKey } from '../platform/paths'
-import { classifyFile, dateFromName, type RuleResult } from '../rules'
+import type { Correction } from '../../db/repos'
+import { classifyFile, dateFromName, namePattern, type RuleResult } from '../rules'
 import { splitExt } from '../scanner/types'
 
 export interface PlannerInput {
@@ -34,6 +35,8 @@ export interface PlannerInput {
   categories: Category[]
   /** AI classifications by file id (phase 3). */
   ai?: Map<string, AIClassifyOutput>
+  /** User corrections (ext + name pattern → category), newest first. */
+  corrections?: Correction[]
   /** Fixed "now" for determinism in tests. */
   now?: number
   /** Disk existence check for collision handling (read-only). */
@@ -204,7 +207,19 @@ export function buildPlan(input: PlannerInput): Plan {
       continue
     }
 
-    const rule = classifyFile(f, meta, settings)
+    let rule = classifyFile(f, meta, settings)
+    // Learning from corrections (docs/03 §9): same extension + name pattern → the user's choice.
+    const corr = input.corrections?.find(
+      (c) =>
+        c.ext === f.ext && c.namePattern === namePattern(f.name) && validCats.has(c.newCategory),
+    )
+    if (corr && corr.newCategory !== rule.category)
+      rule = {
+        ...rule,
+        category: corr.newCategory,
+        confidence: 0.9,
+        reason: 'Benzer dosyaları daha önce siz buraya koydunuz.',
+      }
     let d = decide(rule, input.ai?.get(f.id), validCats)
     const aiOut = input.ai?.get(f.id)
     const sensitive = f.sensitive || !!aiOut?.sensitive
