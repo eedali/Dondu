@@ -102,6 +102,8 @@ function initContext(): void {
   log.info(`Döndü ${app.getVersion()} starting on ${process.platform}/${process.arch}`)
 
   const repos = createRepos(openBetterSqlite(paths.db))
+  // History retention (docs/06 §9).
+  repos.runs.pruneOlderThan(Date.now() - settings.get().history.keepRunsDays * 86_400_000)
   let runner
   try {
     runner = workerRunner(createAnalyzeWorker, defaultPoolSize(settings.get().scan.hashWorkers))
@@ -125,7 +127,10 @@ function initContext(): void {
 
   // Dev tooling only: preset roots / auto-scan for unattended UI checks.
   if (!app.isPackaged && process.env['DONDU_DEV_ROOTS']) {
-    settings.set({ roots: process.env['DONDU_DEV_ROOTS'].split(path.delimiter).filter(Boolean) })
+    settings.set({
+      roots: process.env['DONDU_DEV_ROOTS'].split(path.delimiter).filter(Boolean),
+      onboardingDone: true,
+    })
   }
 
   // Thumbnails are served only from the app's own cache directory.

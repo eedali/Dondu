@@ -732,5 +732,96 @@
     "template": "Klasör şablonu",
     "description": "Açıklama (yapay zekâ için)",
     "examples": "Örnekler (virgülle)"
+  },
+  "onboarding": {
+    "title": "Hoş geldiniz",
+    "intro": "Döndü dağınık klasörlerinizi anlar, size bir düzen önerir ve yalnızca onayınızdan sonra uygular. Hiçbir şey silinmez; her şey geri alınabilir.",
+    "s1": "Dil",
+    "s2": "Dosyalarınızı nasıl anlayalım?",
+    "s3": "Hangi klasörler düzenlensin?",
+    "s4": "Sistem kontrolü",
+    "provider": {
+      "none": {
+        "title": "Yalnızca kurallar",
+        "body": "Ücretsiz, çevrimdışı. Dosyaların çoğunu doğru yere koyar."
+      },
+      "anthropic": {
+        "title": "Claude",
+        "body": "Hızlı ve çok iyi. Yaklaşık 1 sent / 50 dosya; bir API anahtarı gerekir."
+      },
+      "lmstudio": {
+        "title": "LM Studio",
+        "body": "Bilgisayarınızda çalışır, ücretsiz; daha yavaş."
+      }
+    },
+    "keyHint": "Anahtar işletim sisteminin anahtar zincirinde şifreli saklanır. Sonra Ayarlar'dan da girebilirsiniz.",
+    "lmHint": "LM Studio'yu açın, bir model yükleyin ve Developer → Start Server ile sunucuyu başlatın. Modeli Ayarlar → Yapay zekâ'dan seçebilirsiniz.",
+    "checkEmpty": "Klasör ekleyince burada okuma ve yazma izinlerini kontrol edeceğim.",
+    "c": {
+      "read": "Okuma",
+      "write": "Yazma",
+      "cloud": "Yerel dosyalar",
+      "volume": "Yerel disk"
+    },
+    "fixFirst": "Önce okunamayan klasörleri düzeltin ya da çıkarın.",
+    "later": "Daha sonra",
+    "start": "Başla"
+  },
+  "help": {
+    "openFullDisk": "Tam Disk Erişimi ayarlarını aç",
+    "openFilesFolders": "Dosyalar ve Klasörler ayarlarını aç",
+    "openWinSecurity": "Windows Güvenliği'ni aç",
+    "mac-tcc": {
+      "tab": "macOS izinleri",
+      "title": "macOS bu klasöre erişime izin vermedi",
+      "intro": "Tam Disk Erişimi vermek tek seferlik ve en sorunsuz yoldur; istemezseniz yalnızca seçtiğiniz klasörler için izin isteyeceğim.",
+      "steps": [
+        "Aşağıdaki \"Tam Disk Erişimi ayarlarını aç\" düğmesine basın.",
+        "Listede Döndü'yü bulun ve anahtarını açın (gerekirse + ile Uygulamalar klasöründen ekleyin).",
+        "macOS sorarsa Döndü'yü yeniden başlatın.",
+        "Klasörler ekranına dönüp \"Tekrar dene\"ye basın."
+      ]
+    },
+    "mac-gatekeeper": {
+      "tab": "İlk açılış (macOS)",
+      "title": "\"Geliştirici doğrulanamadı\" ya da \"hasarlı\" uyarısı",
+      "intro": "Döndü henüz Apple tarafından imzalanmadı. Bu uyarı bir kez görünür.",
+      "steps": [
+        "Uygulamalar klasöründe Dondu'ya sağ tıklayın ve Aç'ı seçin, ardından yine Aç'a basın.",
+        "Bu işe yaramazsa Terminal'i açın (Uygulamalar → İzlenceler → Terminal).",
+        "Aşağıdaki komutu yapıştırıp Enter'a basın, sonra Döndü'yü normal şekilde açın."
+      ]
+    },
+    "win-cfa": {
+      "tab": "Windows izinleri",
+      "title": "Windows Güvenliği bu klasöre yazmayı engelliyor",
+      "intro": "Fidye yazılımı koruması (Denetimli Klasör Erişimi) açıksa Belgeler, Resimler ve Masaüstü'ne yazma sessizce engellenir.",
+      "steps": [
+        "Aşağıdaki \"Windows Güvenliği'ni aç\" düğmesine basın.",
+        "Virüs ve tehdit koruması → Fidye yazılımı koruması → Fidye yazılımı korumasını yönet'i açın.",
+        "Uygulamanın denetimli klasör erişimine izin ver → İzin verilen uygulama ekle → Dondu.exe'yi seçin.",
+        "Klasörler ekranına dönüp \"Tekrar dene\"ye basın."
+      ]
+    },
+    "win-smartscreen": {
+      "tab": "Kurulum (Windows)",
+      "title": "\"Windows bilgisayarınızı korudu\" uyarısı",
+      "intro": "Döndü'nün kurulum dosyası henüz kod imzalı değil; SmartScreen bu yüzden uyarır.",
+      "steps": [
+        "Uyarı penceresinde \"Daha fazla bilgi\"ye tıklayın.",
+        "\"Yine de çalıştır\" düğmesine basın.",
+        "Kurulumu normal şekilde tamamlayın."
+      ]
+    },
+    "cloud": {
+      "tab": "iCloud / OneDrive",
+      "title": "Bulutta duran dosyalar",
+      "intro": "iCloud Drive veya OneDrive \"isteğe bağlı dosyalar\" açıksa bazı dosyalar bilgisayarda değil, yalnızca buluttadır. Döndü bunlara dokunmaz.",
+      "steps": [
+        "Raporda bu dosyalar \"Bulutta, indirilmemiş\" grubunda görünür ve atlanır.",
+        "Düzenlenmelerini istiyorsanız önce Finder ya da Dosya Gezgini'nde sağ tıklayıp \"Şimdi indir\" / \"Her zaman bu cihazda tut\" seçin.",
+        "Sonra yeniden tarayın."
+      ]
+    }
   }
 }

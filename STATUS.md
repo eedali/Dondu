@@ -4,7 +4,7 @@
 
 ## Şu anki faz
 
-**Faz 4 — Ayarlar, onboarding, cila** (sırada)
+**Faz 5 — Paketleme ve Mac'te gerçek test** (sırada)
 
 ## Yapıldı
 
@@ -17,9 +17,11 @@
 
 - Faz 3 — Yapay zekâ: `AIProvider` arayüzü; AnthropicProvider (`claude-haiku-5-5`, `temperature/top_p/top_k` yok, `output_config.effort`, zorunlu `classify_files` aracı, sistem istemi `cache_control`, base64 görseller, 429/529 → geri çekilme, Message Batches seçeneği); LmStudioProvider (fetch, `/models`, `json_schema`, anlaşılır hata); FakeProvider; BatchRunner (parti, eşzamanlılık, iptal, ilerleme, önbellek `hash|PROMPT_VERSION|provider|model|taksonomi|mod`); maliyet tahmini (docs/03 §7) + plan öncesi tahmin diyaloğu + limit; hassas kapısı (bulut sağlayıcıya ad bile gitmez); düzeltmelerden öğrenme (corrections → istem örnekleri + planner); Ayarlar ekranı (tüm docs/06 bölümleri, Basit/Gelişmiş, Yapay zekâ bölümü, bağlantı testi, kategori düzenleyici, önbellek/log). Geçmişte gerçek token/$.
 
+- Faz 4 — Cila: ilk açılış sihirbazı (dil → sağlayıcı + anahtar → klasörler → sistem kontrolü satırları); "Nasıl düzeltirim?" yardım sayfaları (macOS TCC + Gizlilik ayarlarını aç, Gatekeeper/xattr, Windows Denetimli Klasör Erişimi + Windows Güvenliği'ni aç, SmartScreen, iCloud/OneDrive); boş ve hata durumları; klavye (odak halkası, diyalog odak tuzağı, Escape, sekmelerde ok tuşları); koyu tema; geçmiş saklama süresi (açılışta budama); karantina hatırlatması + OS çöpüne boşaltma; önbellek temizleme, log klasörü. Performans: 20.000 dosya tarama 17 sn, plan 2,4 sn (`DONDU_BENCH=1`, sentetik küçük dosyalar).
+
 ## Sırada
 
-1. Faz 4: onboarding, yardım sayfaları, boş/hata durumları, klavye, performans ölçümü
+1. Faz 5: simgeler/OKU-BENİ, CI release (etiketle macOS + Windows), README kurulum, 0.1.0 + CHANGELOG
 
 ## Bilinen sorunlar / açık kararlar
 
@@ -35,4 +37,4 @@
 
 ## Son güncelleme
 
-2026-10-15 — Faz 3 tamamlandı
+2026-10-15 — Faz 4 tamamlandı

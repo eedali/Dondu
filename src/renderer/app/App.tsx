@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useApp } from './store'
 import { useTheme } from './useTheme'
 import { ErrorToast } from './ErrorToast'
-import { Placeholder } from './Placeholder'
 import { FoldersScreen } from '../features/folders/FoldersScreen'
 import { ScanScreen } from '../features/scan/ScanScreen'
 import { ReportScreen } from '../features/report/ReportScreen'
@@ -11,6 +10,8 @@ import { ApplyScreen } from '../features/apply/ApplyScreen'
 import { RecoveryDialog } from '../features/apply/RecoveryDialog'
 import { HistoryScreen } from '../features/history/HistoryScreen'
 import { SettingsScreen } from '../features/settings/SettingsScreen'
+import { OnboardingScreen } from '../features/onboarding/OnboardingScreen'
+import { HelpScreen } from '../features/help/HelpScreen'
 
 export function App(): React.JSX.Element {
   const { i18n } = useTranslation()
@@ -32,6 +33,14 @@ export function App(): React.JSX.Element {
 
   if (!ready) return <div className="h-full bg-bg" />
 
+  if (settings && !settings.onboardingDone && route !== 'help')
+    return (
+      <>
+        <OnboardingScreen />
+        <ErrorToast />
+      </>
+    )
+
   const screen = (() => {
     switch (route) {
       case 'folders':
@@ -46,8 +55,10 @@ export function App(): React.JSX.Element {
         return <HistoryScreen />
       case 'settings':
         return <SettingsScreen />
+      case 'help':
+        return <HelpScreen />
       default:
-        return <Placeholder />
+        return <FoldersScreen />
     }
   })()
 

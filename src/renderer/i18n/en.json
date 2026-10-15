@@ -732,5 +732,96 @@
     "template": "Folder template",
     "description": "Description (for the AI)",
     "examples": "Examples (comma separated)"
+  },
+  "onboarding": {
+    "title": "Welcome",
+    "intro": "Döndü understands your messy folders, proposes a tidy layout and applies it only after you approve. Nothing is deleted; everything can be undone.",
+    "s1": "Language",
+    "s2": "How should we understand your files?",
+    "s3": "Which folders should be tidied?",
+    "s4": "System check",
+    "provider": {
+      "none": {
+        "title": "Rules only",
+        "body": "Free and offline. Puts most files in the right place."
+      },
+      "anthropic": {
+        "title": "Claude",
+        "body": "Fast and very good. About 1 cent per 50 files; needs an API key."
+      },
+      "lmstudio": {
+        "title": "LM Studio",
+        "body": "Runs on your computer, free; slower."
+      }
+    },
+    "keyHint": "The key is stored encrypted in the system keychain. You can also enter it later in Settings.",
+    "lmHint": "Open LM Studio, load a model and start the server with Developer → Start Server. Pick the model in Settings → AI.",
+    "checkEmpty": "Once you add folders I will check read and write access here.",
+    "c": {
+      "read": "Read",
+      "write": "Write",
+      "cloud": "Local files",
+      "volume": "Local disk"
+    },
+    "fixFirst": "First fix or remove folders that cannot be read.",
+    "later": "Later",
+    "start": "Start"
+  },
+  "help": {
+    "openFullDisk": "Open Full Disk Access settings",
+    "openFilesFolders": "Open Files and Folders settings",
+    "openWinSecurity": "Open Windows Security",
+    "mac-tcc": {
+      "tab": "macOS permissions",
+      "title": "macOS did not allow access to this folder",
+      "intro": "Granting Full Disk Access once is the smoothest way; otherwise I will ask for permission per selected folder.",
+      "steps": [
+        "Press \"Open Full Disk Access settings\" below.",
+        "Find Döndü in the list and turn it on (add it from Applications with + if needed).",
+        "Restart Döndü if macOS asks.",
+        "Go back to Folders and press \"Try again\"."
+      ]
+    },
+    "mac-gatekeeper": {
+      "tab": "First launch (macOS)",
+      "title": "\"Developer cannot be verified\" or \"damaged\" warning",
+      "intro": "Döndü is not yet signed by Apple. This warning appears once.",
+      "steps": [
+        "In Applications, right-click Dondu, choose Open, then Open again.",
+        "If that does not work, open Terminal (Applications → Utilities → Terminal).",
+        "Paste the command below, press Enter, then open Döndü as usual."
+      ]
+    },
+    "win-cfa": {
+      "tab": "Windows permissions",
+      "title": "Windows Security is blocking writes to this folder",
+      "intro": "With Ransomware protection (Controlled folder access) on, writes to Documents, Pictures and Desktop are silently blocked.",
+      "steps": [
+        "Press \"Open Windows Security\" below.",
+        "Go to Virus & threat protection → Ransomware protection → Manage ransomware protection.",
+        "Allow an app through Controlled folder access → Add an allowed app → choose Dondu.exe.",
+        "Go back to Folders and press \"Try again\"."
+      ]
+    },
+    "win-smartscreen": {
+      "tab": "Install (Windows)",
+      "title": "\"Windows protected your PC\" warning",
+      "intro": "Döndü's installer is not code-signed yet, so SmartScreen warns about it.",
+      "steps": [
+        "Click \"More info\" in the warning.",
+        "Press \"Run anyway\".",
+        "Finish the installation as usual."
+      ]
+    },
+    "cloud": {
+      "tab": "iCloud / OneDrive",
+      "title": "Files that live in the cloud",
+      "intro": "With iCloud Drive or OneDrive \"files on demand\", some files exist only in the cloud, not on this computer. Döndü leaves them alone.",
+      "steps": [
+        "In the report they appear in the \"In the cloud, not downloaded\" group and are skipped.",
+        "To include them, right-click in Finder or File Explorer and choose \"Download now\" / \"Always keep on this device\".",
+        "Then scan again."
+      ]
+    }
   }
 }
