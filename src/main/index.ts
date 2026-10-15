@@ -19,6 +19,8 @@ import { SettingsStore } from './settings'
 import { SecretStore } from './settings/secrets'
 
 const isDev = !app.isPackaged
+/** Test hooks (screenshot, preset roots, auto scan/plan/apply): dev builds, or packaged smoke tests. */
+const devHooks = !app.isPackaged || process.env['DONDU_SMOKE_TEST'] === '1'
 
 // Stable, ASCII user data folder: ~/Library/Application Support/Dondu, %AppData%\Dondu.
 app.setName('Dondu')
@@ -54,7 +56,7 @@ function createWindow(): BrowserWindow {
 
   // Dev tooling: DONDU_SCREENSHOT=<file.png> captures the window once and quits (UI verification).
   const shot = process.env['DONDU_SCREENSHOT']
-  if (shot && !app.isPackaged) {
+  if (shot && devHooks) {
     win.webContents.once('did-finish-load', () => {
       setTimeout(
         () => {
@@ -80,7 +82,7 @@ function createWindow(): BrowserWindow {
 
   // Dev tooling: DONDU_ROUTE / DONDU_AUTOSCAN / DONDU_AUTOPLAN are passed as query params.
   const query: Record<string, string> = {}
-  if (!app.isPackaged) {
+  if (devHooks) {
     for (const k of ['ROUTE', 'AUTOSCAN', 'AUTOPLAN', 'AUTOAPPLY'])
       if (process.env[`DONDU_${k}`]) query[k.toLowerCase()] = process.env[`DONDU_${k}`]!
   }
@@ -126,7 +128,7 @@ function initContext(): void {
   })
 
   // Dev tooling only: preset roots / auto-scan for unattended UI checks.
-  if (!app.isPackaged && process.env['DONDU_DEV_ROOTS']) {
+  if (devHooks && process.env['DONDU_DEV_ROOTS']) {
     settings.set({
       roots: process.env['DONDU_DEV_ROOTS'].split(path.delimiter).filter(Boolean),
       onboardingDone: true,

@@ -9,6 +9,8 @@ files:
   - resources/**
   - package.json
   - '!**/*.map'
+  # pdfjs only needs its optional canvas binding for rendering, which Döndü never does.
+  - '!node_modules/@napi-rs/**'
 asarUnpack:
   - resources/**
   - '**/*.node'

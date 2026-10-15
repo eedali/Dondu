@@ -4,7 +4,7 @@
 
 ## Şu anki faz
 
-**Faz 5 — Paketleme ve Mac'te gerçek test** (sırada)
+**Faz 5 — tamam (v0.1.0)**; sırada: Mac'te gerçek kullanım testi → "Faz 5 düzeltmeleri", sonra Faz 6 (isteğe bağlı)
 
 ## Yapıldı
 
@@ -19,14 +19,20 @@
 
 - Faz 4 — Cila: ilk açılış sihirbazı (dil → sağlayıcı + anahtar → klasörler → sistem kontrolü satırları); "Nasıl düzeltirim?" yardım sayfaları (macOS TCC + Gizlilik ayarlarını aç, Gatekeeper/xattr, Windows Denetimli Klasör Erişimi + Windows Güvenliği'ni aç, SmartScreen, iCloud/OneDrive); boş ve hata durumları; klavye (odak halkası, diyalog odak tuzağı, Escape, sekmelerde ok tuşları); koyu tema; geçmiş saklama süresi (açılışta budama); karantina hatırlatması + OS çöpüne boşaltma; önbellek temizleme, log klasörü. Performans: 20.000 dosya tarama 17 sn, plan 2,4 sn (`DONDU_BENCH=1`, sentetik küçük dosyalar).
 
+- Faz 5 — Paketleme: electron-builder son hâli (logo simgeleri `build/icon.icns|ico`, DMG içinde `OKU-BENİ.txt`, `@napi-rs/canvas` paket dışı), CI (`v*` etiketi → macOS arm64+x64 DMG ad-hoc + `codesign --verify`, Windows NSIS, Release), README kurulum bölümü (Mac xattr / sağ tık Aç, Windows SmartScreen, Denetimli Klasör Erişimi), sürüm 0.1.0 + CHANGELOG. Paketli Windows uygulaması duman testinden geçti (`DONDU_SMOKE_TEST=1`: tara → plan → uygula, 60 dosya, 0 hata).
+
 ## Sırada
 
-1. Faz 5: simgeler/OKU-BENİ, CI release (etiketle macOS + Windows), README kurulum, 0.1.0 + CHANGELOG
+1. Etiket: `git tag v0.1.0 && git push origin v0.1.0` → GitHub Actions paketleri Release'e yükler
+2. Mac'te gerçek test: DMG → Uygulamalar → `xattr -dr com.apple.quarantine /Applications/Dondu.app` → önce küçük test klasöründe tam akış + geri alma
+3. Bulunan hatalar → "Faz 5 düzeltmeleri"; sonra Faz 6 (Gelen kutusu izleme, OCR, güncelleme, imzalama, fi.json …)
 
 ## Bilinen sorunlar / açık kararlar
 
 - Arayüz vurgu rengi logodan alındı (kobalt `#3D5AFE`, gece mavisi `#1A1F3A`); `docs/08` güncellendi.
-- macOS derlemesi yalnızca GitHub Actions üzerinde; Mac'te ilk gerçek test Faz 5'te
+- macOS derlemesi yalnızca GitHub Actions üzerinde; macOS'ta (ditto, TCC, iCloud yer tutucu, APFS) henüz gerçek makinede denenmedi
+- CI'daki Linux test işi yerelde çalıştırılamadı (Windows geliştirici makinesi); ilk push'ta yeşil olduğu doğrulanmalı
+- Paketli uygulamada pdfjs, kullanılmayan canvas modülü için konsola zararsız uyarılar basıyor
 - Geliştirme araçları (yalnızca paketlenmemiş uygulama): `DONDU_SCREENSHOT=<png>` pencere görüntüsü alıp kapanır; `DONDU_USERDATA=<dir>` ayrı veri klasörü; `DONDU_DEV_ROOTS=<yol>` kökleri ayarlar; `DONDU_AUTOSCAN=1`, `DONDU_AUTOPLAN=1`, `DONDU_AUTOAPPLY=1`, `DONDU_ROUTE=<ekran>`
 - Değişen kaynak dosyalar ön kontrolde yalnızca "atla" ile geçilebiliyor (doc "yine de uygula" seçeneği öneriyor; güvenlik için şimdilik yok)
 - `apply.concurrency` ayarı okunuyor ama uygulama şimdilik hep sıralı (güvenli varsayılan)
@@ -37,4 +43,4 @@
 
 ## Son güncelleme
 
-2026-10-15 — Faz 4 tamamlandı
+2026-10-15 — Faz 5 tamamlandı (v0.1.0)

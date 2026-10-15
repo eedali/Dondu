@@ -2,7 +2,7 @@
 
 Dağınık dosyaları **seçtiğin klasörler içinde** anlayıp düzenleyen masaüstü uygulaması (macOS + Windows). Her dosyaya bakar, ne olduğunu çıkarır, nereye gitmesi gerektiğini bir **rapor** olarak önerir; sen düzeltir ve onaylarsın; ancak ondan sonra uygular. Her işlem kayıt altındadır ve **geri alınabilir**. Hiçbir dosyayı silmez.
 
-> Durum: planlama tamamlandı, kod henüz yok. Geliştirme Claude Code ile `docs/07-YOL-HARITASI.md`'deki fazlara göre yapılır.
+> Durum: **v0.1.0** — Faz 0–5 uygulandı (tarama, kurallar, kopyalar, plan/rapor, onaylı uygulama, geri alma, yapay zekâ, ayarlar, onboarding). Ayrıntı: `STATUS.md`, değişiklikler: `CHANGELOG.md`.
 
 ## Bu klasörde ne var
 
@@ -22,6 +22,9 @@ Dağınık dosyaları **seçtiğin klasörler içinde** anlayıp düzenleyen mas
 | `.claude/settings.json` | Claude Code izinleri (npm/git serbest, `git push` sorar, `.env` okunamaz) |
 | `.github/workflows/build.yml` | CI: her push'ta test; etiketle macOS + Windows paketi ve Release |
 | `scripts/setup-git.ps1` | Git'i bir kez kurup **bir daha parola sordurmayan** script |
+| `CHANGELOG.md` | Sürüm notları |
+| `logo/` | Marka logosu (svg + png); uygulama simgeleri buradan üretilir |
+| `src/`, `tests/` | Uygulama kodu ve testler |
 
 ## Başlangıç (Windows, geliştirici)
 
@@ -45,10 +48,45 @@ GitHub, git üzerinden hesap parolasını zaten kabul etmiyor; "password" diye s
 
 Claude Haiku 5.5: $0,10 / 1M girdi, $0,50 / 1M çıktı (istem ≤100K token). 50 karışık masaüstü dosyasının **tamamı** AI'a gönderilse bile ≈ **$0,007** (1 sentin altında); 5.000 dosya ≈ $0,70. Kural motoru çoğunu AI'sız sınıflandırdığı için gerçek maliyet daha düşük. Ayrıntı: `docs/03-YAPAY-ZEKA.md` §7. Hassas dosyalar hiçbir zaman buluta gitmez; LM Studio ile tamamen yerel çalışma mümkündür.
 
-## Kurulum (son kullanıcı) — Faz 5'te tamamlanacak
+## Kurulum (son kullanıcı)
 
-- **macOS:** GitHub Releases'tan `.dmg` indir, `Dondu.app`'i Uygulamalar'a sürükle. İmzasız olduğu için ilk açılışta Terminal'de `xattr -dr com.apple.quarantine /Applications/Dondu.app` çalıştır (veya sağ tık → Aç). İlk taramada macOS klasör izni soracak; "İzin ver" de veya Sistem Ayarları → Gizlilik ve Güvenlik → Tam Disk Erişimi'ne Döndü'yü ekle.
-- **Windows:** `.exe` kurulum; SmartScreen uyarısında "Daha fazla bilgi → Yine de çalıştır". Belgeler/Masaüstü'ne yazamıyorsa Windows Güvenliği → Fidye yazılımı koruması → Döndü'ye izin ver.
+Paketler GitHub Releases'ta: https://github.com/eedali/Dondu/releases
+
+### macOS (Apple Silicon ve Intel)
+
+1. Mac'inize uygun `.dmg` dosyasını indirin: Apple Silicon (M1/M2/M3/M4) için `Dondu-x.y.z-arm64.dmg`, Intel için `Dondu-x.y.z-x64.dmg`.
+2. DMG'yi açın, `Dondu.app`'i **Applications** (Uygulamalar) klasörüne sürükleyin. DMG içindeki `OKU-BENİ.txt` aynı adımları anlatır.
+3. Döndü henüz Apple tarafından imzalanmadığı için ilk açılışta "geliştirici doğrulanamadı" ya da "hasarlı" uyarısı çıkabilir. Terminal'i açın ve şunu çalıştırın:
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/Dondu.app
+   ```
+   Alternatif: Uygulamalar'da Dondu'ya sağ tık → **Aç** → **Aç**.
+4. İlk taramada macOS klasör izni sorar: **İzin Ver**. Daha sorunsuz yol: Sistem Ayarları → Gizlilik ve Güvenlik → **Tam Disk Erişimi** → Döndü'yü ekleyin (uygulamadaki "Nasıl düzeltirim?" sayfası doğrudan bu ekranı açar).
+
+### Windows 10/11 (x64)
+
+1. `Dondu-Setup-x.y.z.exe` dosyasını indirip çalıştırın.
+2. SmartScreen "Windows bilgisayarınızı korudu" derse: **Daha fazla bilgi** → **Yine de çalıştır** (kurulum dosyası henüz kod imzalı değil).
+3. Belgeler/Masaüstü'ne yazamıyorsa: Windows Güvenliği → Virüs ve tehdit koruması → Fidye yazılımı koruması → **Uygulamanın denetimli klasör erişimine izin ver** → Dondu.exe'yi ekleyin.
+
+### İlk kullanım önerisi
+
+Önce küçük bir test klasöründe (ör. Masaüstü'ndeki 20 dosyanın kopyası) tam akışı deneyin: Tara → Planı oluştur → Rapor'u gözden geçir → Onayla ve uygula → Geçmiş → **Geri al**. Her şey yerine döndüğünü gördükten sonra gerçek klasörlerde kullanın.
+
+## Geliştirme
+
+```bash
+npm ci
+npm run dev        # uygulama (HMR)
+npm test           # vitest (Electron'un Node'unda; better-sqlite3 Electron ABI'si için)
+npm run typecheck && npm run lint
+npm run fixtures   # OS temp klasöründe 80 dosyalık dağınık bir klasör üretir
+npm run package    # bu işletim sistemi için dist/ altında paket
+```
+
+- macOS paketleri yalnızca GitHub Actions'ta üretilir: `v*` etiketi itilince CI macOS (arm64 + x64 DMG, ad-hoc imza + `codesign --verify`) ve Windows (NSIS) paketlerini Release'e yükler.
+- Uygulama simgeleri `logo/` klasöründen `python scripts/make-icons.py` ile üretilir (`build/icon.*`).
+- Yapay zekâ canlı testi: `DONDU_LIVE_AI=1 ANTHROPIC_API_KEY=... npm test` (3 dosya). Performans: `DONDU_BENCH=1 npm test` (20.000 dosya).
 
 ## Lisans
 
