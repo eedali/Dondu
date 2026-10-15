@@ -4,7 +4,7 @@
 
 ## Şu anki faz
 
-**Revizyon 1–3 tamam (v0.2.0 etiketlendi)**; sırada: kendi verinizle deneme (Windows + Mac)
+**Revizyon 1–3 tamam (v0.2.1 etiketlendi)**; sırada: kendi verinizle deneme (Windows + Mac)
 
 ## Yapıldı
 

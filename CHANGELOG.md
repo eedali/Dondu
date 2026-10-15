@@ -2,6 +2,11 @@
 
 Bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.2.1] — 2026-10-15
+
+### Düzeltildi
+- macOS: uygulama açılır açılmaz çöküyordu (yardımcı süreçler bulunamıyordu). Mac paketi artık ad-hoc imzalı ve yayından önce GitHub'da gerçekten açılıp test ediliyor.
+
 ## [0.2.0] — 2026-10-15
 
 ### Değişti
