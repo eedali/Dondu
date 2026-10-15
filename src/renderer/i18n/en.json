@@ -8,15 +8,126 @@
     "folders": "Folders",
     "scan": "Scan",
     "report": "Report",
+    "apply": "Apply",
     "history": "History",
-    "settings": "Settings"
+    "settings": "Settings",
+    "help": "Help"
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "reveal": "Show in folder",
+    "save": "Save",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "continue": "Continue",
+    "files_one": "{{count}} file",
+    "files_other": "{{count}} files"
   },
   "status": {
-    "idle": "Ready",
-    "connected": "Ready · {{platform}} · v{{version}}"
+    "noFolders": "Add folders to get started",
+    "foldersSelected_one": "{{count}} folder selected — Scan",
+    "foldersSelected_other": "{{count}} folders selected — Scan",
+    "walking": "Finding files… {{count}}",
+    "scanPct": "Scanning {{pct}}%",
+    "scanDone": "Scan finished: {{count}} files — Build the plan",
+    "planReady": "Plan ready: {{move}} moves, {{quarantine}} to quarantine — Review"
   },
   "placeholder": {
     "title": "This screen is coming soon",
     "body": "Döndü is being built step by step."
+  },
+  "folders": {
+    "title": "Folders",
+    "intro": "Döndü only looks at the folders you choose. Scanning never touches files; nothing moves without your approval.",
+    "add": "Add folder",
+    "scan": "Scan",
+    "remove": "Remove {{name}} from the list",
+    "checking": "Checking…",
+    "emptyTitle": "No folders selected yet",
+    "emptyBody": "Add the folders you want to tidy, such as Desktop, Downloads or Documents.",
+    "rejected": {
+      "system": "This is a system folder and cannot be selected.",
+      "app": "Döndü's own data folder cannot be selected.",
+      "missing": "Folder not found.",
+      "not_dir": "This is not a folder.",
+      "nested": "It is already inside a selected folder."
+    }
+  },
+  "check": {
+    "readOk": "Read OK",
+    "readNo": "Cannot read",
+    "writeOk": "Write OK",
+    "writeNo": "Cannot write",
+    "retry": "Try again",
+    "howToFix": "How do I fix this?",
+    "cloudHint": "This folder syncs with the cloud. Files that are not downloaded are left alone and shown separately in the report.",
+    "cloud": {
+      "icloud": "iCloud",
+      "onedrive": "OneDrive",
+      "dropbox": "Dropbox",
+      "google": "Google Drive"
+    },
+    "volume": {
+      "removable": "External drive",
+      "network": "Network volume"
+    },
+    "problem": {
+      "missing": "This folder no longer exists or has moved.",
+      "read": "This folder cannot be read. Check its permissions.",
+      "readMac": "macOS did not allow access to this folder — open Privacy settings to grant it.",
+      "write": "This folder is not writable. Scanning works, but applying a plan needs write access.",
+      "writeWin": "Windows Security may be blocking writes here (Ransomware protection). Scanning works."
+    }
+  },
+  "scan": {
+    "title": "Scan",
+    "stop": "Stop",
+    "rescan": "Scan again",
+    "found": "Found",
+    "analyzed": "Analysed",
+    "allAnalyzed": "All",
+    "readOnly": "Scanning is read-only: nothing is moved or changed.",
+    "phase": {
+      "walking": "Finding files",
+      "analyzing": "Looking at files",
+      "hashing": "Comparing duplicates"
+    },
+    "emptyTitle": "No scan yet",
+    "emptyBody_one": "Scan {{count}} folder to see a summary here.",
+    "emptyBody_other": "Scan {{count}} folders to see a summary here.",
+    "noFolders": "First choose the folders to tidy.",
+    "cancelled": "The scan was stopped. The summary below shows what was found until then.",
+    "files": "Files",
+    "size": "Total size",
+    "sensitive": "Sensitive",
+    "bundles": "Packages / projects",
+    "byType": "By type",
+    "cloudSkipped_one": "Note: {{count}} file is in the cloud and not downloaded; I left it alone.",
+    "cloudSkipped_other": "Note: {{count}} files are in the cloud and not downloaded; I left them alone."
+  },
+  "family": {
+    "image": "Image",
+    "document": "Document",
+    "spreadsheet": "Spreadsheet",
+    "presentation": "Presentation",
+    "text": "Text",
+    "audio": "Audio",
+    "video": "Video",
+    "archive": "Archive",
+    "installer": "Installer",
+    "code": "Code",
+    "design": "Design",
+    "book": "Book",
+    "other": "Other"
+  },
+  "plan": {
+    "build": "Build the plan"
+  },
+  "errors": {
+    "scan_running": "A scan is already running.",
+    "scan_failed": "The scan could not be completed."
   }
 }

@@ -1,34 +1,38 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { PingResult } from '@shared/ipc'
-import { Layout } from './Layout'
-import { useUi } from './store'
+import { useApp } from './store'
 import { useTheme } from './useTheme'
+import { FoldersScreen } from '../features/folders/FoldersScreen'
+import { ScanScreen } from '../features/scan/ScanScreen'
+import { Placeholder } from './Placeholder'
+import { ErrorToast } from './ErrorToast'
 
 export function App(): React.JSX.Element {
-  const { t } = useTranslation()
-  const route = useUi((s) => s.route)
-  const [ping, setPing] = useState<PingResult | null>(null)
-  useTheme('system')
+  const { i18n } = useTranslation()
+  const ready = useApp((s) => s.ready)
+  const init = useApp((s) => s.init)
+  const route = useApp((s) => s.route)
+  const settings = useApp((s) => s.settings)
+  useTheme(settings?.theme ?? 'system')
 
   useEffect(() => {
-    void window.dondu.ping().then(setPing)
-  }, [])
+    void init()
+  }, [init])
+
+  useEffect(() => {
+    const lang = settings?.language === 'en' ? 'en' : 'tr'
+    if (settings && i18n.language !== lang) void i18n.changeLanguage(lang)
+    document.documentElement.lang = lang
+  }, [settings, i18n])
+
+  if (!ready) return <div className="h-full bg-bg" />
 
   return (
-    <Layout
-      title={t(`nav.${route}`)}
-      status={
-        ping
-          ? t('status.connected', { platform: ping.platform, version: ping.version })
-          : t('status.idle')
-      }
-      disabled={['report']}
-    >
-      <div className="rounded-lg border border-line bg-surface p-8">
-        <h2 className="text-[17px] font-medium">{t('placeholder.title')}</h2>
-        <p className="mt-2 text-muted">{t('placeholder.body')}</p>
-      </div>
-    </Layout>
+    <>
+      {route === 'folders' && <FoldersScreen />}
+      {route === 'scan' && <ScanScreen />}
+      {route !== 'folders' && route !== 'scan' && <Placeholder />}
+      <ErrorToast />
+    </>
   )
 }

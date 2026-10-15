@@ -8,15 +8,126 @@
     "folders": "Klasörler",
     "scan": "Tarama",
     "report": "Rapor",
+    "apply": "Uygula",
     "history": "Geçmiş",
-    "settings": "Ayarlar"
+    "settings": "Ayarlar",
+    "help": "Yardım"
+  },
+  "common": {
+    "close": "Kapat",
+    "cancel": "Vazgeç",
+    "remove": "Kaldır",
+    "reveal": "Klasörde göster",
+    "save": "Kaydet",
+    "back": "Geri",
+    "yes": "Evet",
+    "no": "Hayır",
+    "continue": "Devam et",
+    "files_one": "{{count}} dosya",
+    "files_other": "{{count}} dosya"
   },
   "status": {
-    "idle": "Hazır",
-    "connected": "Hazır · {{platform}} · v{{version}}"
+    "noFolders": "Başlamak için klasör ekleyin",
+    "foldersSelected_one": "{{count}} klasör seçildi — Tara",
+    "foldersSelected_other": "{{count}} klasör seçildi — Tara",
+    "walking": "Dosyalar bulunuyor… {{count}}",
+    "scanPct": "Tarama %{{pct}}",
+    "scanDone": "Tarama bitti: {{count}} dosya — Planı oluşturun",
+    "planReady": "Plan hazır: {{move}} taşıma, {{quarantine}} karantina — Gözden geçirin"
   },
   "placeholder": {
     "title": "Bu ekran yakında burada",
     "body": "Döndü adım adım inşa ediliyor."
+  },
+  "folders": {
+    "title": "Klasörler",
+    "intro": "Döndü yalnızca seçtiğiniz klasörlere bakar. Tarama dosyalara dokunmaz; hiçbir şey onayınız olmadan taşınmaz.",
+    "add": "Klasör ekle",
+    "scan": "Tara",
+    "remove": "{{name}} klasörünü listeden kaldır",
+    "checking": "Kontrol ediliyor…",
+    "emptyTitle": "Henüz klasör seçilmedi",
+    "emptyBody": "Masaüstü, İndirilenler ya da Belgeler gibi düzenlemek istediğiniz klasörleri ekleyin.",
+    "rejected": {
+      "system": "Bu bir sistem klasörü; güvenlik için seçilemez.",
+      "app": "Döndü'nün kendi veri klasörü seçilemez.",
+      "missing": "Klasör bulunamadı.",
+      "not_dir": "Bu bir klasör değil.",
+      "nested": "Zaten seçili bir klasörün içinde."
+    }
+  },
+  "check": {
+    "readOk": "Okuma tamam",
+    "readNo": "Okunamıyor",
+    "writeOk": "Yazma tamam",
+    "writeNo": "Yazılamıyor",
+    "retry": "Tekrar dene",
+    "howToFix": "Nasıl düzeltirim?",
+    "cloudHint": "Bu klasör bulutla eşitleniyor. İndirilmemiş dosyalara dokunulmaz; raporda ayrıca gösterilir.",
+    "cloud": {
+      "icloud": "iCloud",
+      "onedrive": "OneDrive",
+      "dropbox": "Dropbox",
+      "google": "Google Drive"
+    },
+    "volume": {
+      "removable": "Harici disk",
+      "network": "Ağ birimi"
+    },
+    "problem": {
+      "missing": "Bu klasör artık yok ya da taşınmış.",
+      "read": "Bu klasör okunamıyor. Erişim izinlerini kontrol edin.",
+      "readMac": "macOS bu klasöre erişime izin vermedi — Gizlilik ayarlarını açıp izin verebilirsiniz.",
+      "write": "Bu klasöre yazılamıyor. Taramada sorun yok, ama uygulamak için yazma izni gerekir.",
+      "writeWin": "Windows Güvenliği bu klasöre yazmayı engelliyor olabilir (Fidye yazılımı koruması). Taramada sorun yok."
+    }
+  },
+  "scan": {
+    "title": "Tarama",
+    "stop": "Durdur",
+    "rescan": "Yeniden tara",
+    "found": "Bulundu",
+    "analyzed": "Analiz edildi",
+    "allAnalyzed": "Hepsi",
+    "readOnly": "Tarama salt okunurdur: hiçbir dosya taşınmaz, değiştirilmez.",
+    "phase": {
+      "walking": "Dosyalar bulunuyor",
+      "analyzing": "Dosyalar inceleniyor",
+      "hashing": "Kopyalar karşılaştırılıyor"
+    },
+    "emptyTitle": "Henüz tarama yapılmadı",
+    "emptyBody_one": "{{count}} klasör tarandığında burada bir özet göreceksiniz.",
+    "emptyBody_other": "{{count}} klasör tarandığında burada bir özet göreceksiniz.",
+    "noFolders": "Önce düzenlenecek klasörleri seçin.",
+    "cancelled": "Tarama durduruldu. Aşağıdaki özet o ana kadar bulunanları gösteriyor.",
+    "files": "Dosya",
+    "size": "Toplam boyut",
+    "sensitive": "Hassas",
+    "bundles": "Paket / proje",
+    "byType": "Türlere göre",
+    "cloudSkipped_one": "Dikkat: {{count}} dosya bulutta ve indirilmemiş; onlara dokunmadım.",
+    "cloudSkipped_other": "Dikkat: {{count}} dosya bulutta ve indirilmemiş; onlara dokunmadım."
+  },
+  "family": {
+    "image": "Görsel",
+    "document": "Belge",
+    "spreadsheet": "Tablo",
+    "presentation": "Sunum",
+    "text": "Metin",
+    "audio": "Ses",
+    "video": "Video",
+    "archive": "Arşiv",
+    "installer": "Kurulum",
+    "code": "Kod",
+    "design": "Tasarım",
+    "book": "Kitap",
+    "other": "Diğer"
+  },
+  "plan": {
+    "build": "Planı oluştur"
+  },
+  "errors": {
+    "scan_running": "Zaten bir tarama sürüyor.",
+    "scan_failed": "Tarama tamamlanamadı."
   }
 }

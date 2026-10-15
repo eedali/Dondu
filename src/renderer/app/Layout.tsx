@@ -1,9 +1,12 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Logo } from '../components/Logo'
-import { useUi, type Route } from './store'
+import { useApp, type Route } from './store'
 
 const NAV: Route[] = ['folders', 'scan', 'report', 'history', 'settings']
+
+/** Sub-screens highlight their parent nav item. */
+const PARENT: Partial<Record<Route, Route>> = { apply: 'report', help: 'settings' }
 
 export function Layout({
   title,
@@ -23,8 +26,14 @@ export function Layout({
   wide?: boolean
 }): React.JSX.Element {
   const { t } = useTranslation()
-  const route = useUi((s) => s.route)
-  const setRoute = useUi((s) => s.setRoute)
+  const route = useApp((s) => s.route)
+  const setRoute = useApp((s) => s.setRoute)
+  const hasPlan = useApp((s) => !!s.plan)
+  const applying = useApp(
+    (s) => s.applyProgress?.status === 'running' || s.applyProgress?.status === 'paused',
+  )
+  const current = PARENT[route] ?? route
+  const autoDisabled: Route[] = hasPlan ? [] : ['report']
 
   return (
     <div className="flex h-full">
@@ -37,15 +46,16 @@ export function Layout({
         </div>
         <ul className="flex flex-col gap-1 px-3">
           {NAV.map((r) => {
-            const isDisabled = disabled.includes(r)
-            const active = r === route
+            const isDisabled =
+              disabled.includes(r) || autoDisabled.includes(r) || (applying && r !== current)
+            const active = r === current
             return (
               <li key={r}>
                 <button
                   type="button"
                   disabled={isDisabled}
                   aria-current={active ? 'page' : undefined}
-                  onClick={() => setRoute(r)}
+                  onClick={() => setRoute(r === 'report' && applying ? 'apply' : r)}
                   className={[
                     'w-full rounded-md px-3 py-2 text-left text-[15px]',
                     active

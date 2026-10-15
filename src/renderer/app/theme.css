@@ -102,3 +102,20 @@ textarea,
 :root[data-theme='dark'] .dondu-logo-light {
   display: none;
 }
+
+@keyframes dondu-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+.dondu-indeterminate > div {
+  animation: dondu-indeterminate 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dondu-indeterminate > div {
+    animation: none;
+  }
+}
