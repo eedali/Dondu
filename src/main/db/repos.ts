@@ -320,6 +320,9 @@ interface PlanItemDbRow {
   group_key: string
   flags_json: string
   duplicate_of: string | null
+  unit_id: string | null
+  unit_title: string | null
+  topic: string | null
 }
 
 const toItem = (r: PlanItemDbRow): PlanItem => ({
@@ -340,6 +343,9 @@ const toItem = (r: PlanItemDbRow): PlanItem => ({
   groupKey: r.group_key,
   flags: parse<ItemFlag[]>(r.flags_json, []),
   duplicateOf: r.duplicate_of ?? undefined,
+  unitId: r.unit_id ?? undefined,
+  unitTitle: r.unit_title ?? undefined,
+  topic: r.topic ?? undefined,
 })
 
 export class PlanRepo {
@@ -364,8 +370,9 @@ export class PlanRepo {
       this.db.prepare('DELETE FROM plan_items WHERE plan_id = ?').run([plan.id])
       const st = this.db.prepare(
         `INSERT INTO plan_items (id, plan_id, file_id, action, source_path, target_path, category, subcategory,
-          suggested_name, confidence, reason, source, enabled, user_edited, group_key, flags_json, duplicate_of, sort)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          suggested_name, confidence, reason, source, enabled, user_edited, group_key, flags_json, duplicate_of, sort,
+          unit_id, unit_title, topic)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       plan.items.forEach((it, i) =>
         st.run([
@@ -387,6 +394,9 @@ export class PlanRepo {
           JSON.stringify(it.flags),
           it.duplicateOf ?? null,
           i,
+          it.unitId ?? null,
+          it.unitTitle ?? null,
+          it.topic ?? null,
         ]),
       )
     })
@@ -439,7 +449,7 @@ export class PlanRepo {
     this.db
       .prepare(
         `UPDATE plan_items SET action = ?, target_path = ?, category = ?, suggested_name = ?, enabled = ?,
-          user_edited = ?, group_key = ?, flags_json = ?, reason = ?, source = ?, confidence = ? WHERE id = ?`,
+          user_edited = ?, group_key = ?, flags_json = ?, reason = ?, source = ?, confidence = ?, unit_title = ? WHERE id = ?`,
       )
       .run([
         item.action,
@@ -453,6 +463,7 @@ export class PlanRepo {
         item.reason,
         item.source,
         item.confidence,
+        item.unitTitle ?? null,
         item.id,
       ])
   }
@@ -826,6 +837,52 @@ export class CorrectionRepo {
   }
 }
 
+export interface FolderPref {
+  root: string
+  topic: string
+  kind: string
+  folder: string
+  createdAt: number
+}
+
+/** Folder choices the user made in the report (revision 1 "remember my corrections"). */
+export class FolderPrefRepo {
+  constructor(private db: SqlDb) {}
+
+  add(p: Omit<FolderPref, 'createdAt'>): void {
+    this.db
+      .prepare(
+        'INSERT INTO folder_prefs (root, topic, kind, folder, created_at) VALUES (?, ?, ?, ?, ?)',
+      )
+      .run([p.root, p.topic, p.kind, p.folder, Date.now()])
+  }
+
+  /** Newest first, one row per (topic, kind). */
+  recent(root: string, limit = 60): FolderPref[] {
+    const rows = this.db
+      .prepare<{ root: string; topic: string; kind: string; folder: string; created_at: number }>(
+        'SELECT * FROM folder_prefs WHERE root = ? ORDER BY created_at DESC, id DESC LIMIT ?',
+      )
+      .all([root, limit * 3])
+    const seen = new Set<string>()
+    const out: FolderPref[] = []
+    for (const r of rows) {
+      const k = `${r.topic}|${r.kind}`
+      if (seen.has(k)) continue
+      seen.add(k)
+      out.push({
+        root: r.root,
+        topic: r.topic,
+        kind: r.kind,
+        folder: r.folder,
+        createdAt: r.created_at,
+      })
+      if (out.length >= limit) break
+    }
+    return out
+  }
+}
+
 // ---------------------------------------------------------------- aggregate
 
 export interface Repos {
@@ -838,6 +895,7 @@ export interface Repos {
   categories: CategoryRepo
   aiCache: AiCacheRepo
   corrections: CorrectionRepo
+  folderPrefs: FolderPrefRepo
 }
 
 export function createRepos(db: SqlDb): Repos {
@@ -854,5 +912,6 @@ export function createRepos(db: SqlDb): Repos {
     categories,
     aiCache: new AiCacheRepo(db),
     corrections: new CorrectionRepo(db),
+    folderPrefs: new FolderPrefRepo(db),
   }
 }

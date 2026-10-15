@@ -68,9 +68,26 @@ async function sniffMime(file: string): Promise<string | undefined> {
   }
 }
 
+/** PNG width/height straight from the IHDR chunk (exact pixel size → screenshot detection). */
+async function pngSize(file: string): Promise<{ width: number; height: number } | undefined> {
+  const head = await readHead(file, 24)
+  if (
+    head.length < 24 ||
+    head.readUInt32BE(0) !== 0x89504e47 ||
+    head.toString('ascii', 12, 16) !== 'IHDR'
+  )
+    return undefined
+  return { width: head.readUInt32BE(16), height: head.readUInt32BE(20) }
+}
+
 async function extractImage(file: string): Promise<FileMeta> {
   const exifr = (await import('exifr')).default
   const meta: FileMeta = {}
+  const png = await pngSize(file).catch(() => undefined)
+  if (png) {
+    meta.width = png.width
+    meta.height = png.height
+  }
   try {
     const tags = (await exifr.parse(longPath(file), {
       tiff: true,

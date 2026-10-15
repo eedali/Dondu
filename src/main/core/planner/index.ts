@@ -24,6 +24,7 @@ import { absOf, isInside, pathKey } from '../platform/paths'
 import type { Correction } from '../../db/repos'
 import { classifyFile, dateFromName, namePattern, type RuleResult } from '../rules'
 import { splitExt } from '../scanner/types'
+import type { Organization, Placement } from '../organize'
 
 export interface PlannerInput {
   planId: string
@@ -41,6 +42,8 @@ export interface PlannerInput {
   now?: number
   /** Disk existence check for collision handling (read-only). */
   exists?: (p: string) => boolean
+  /** Revision 1: units and their placements (rules and/or AI). */
+  organization?: Organization
 }
 
 const PHOTO_CATS = new Set(['photos'])
@@ -115,8 +118,19 @@ export function buildPlan(input: PlannerInput): Plan {
   const quarantineDir = (root: string): string =>
     path.join(root, sanitizeSegment(settings.quarantineFolderName), qLabel)
 
+  const org = input.organization
+  const fileById = new Map(files.map((f) => [f.id, f]))
+  // Folder units travel as one piece: their files never get items of their own (revision 1).
+  const folderUnits = org ? [...org.units.values()].filter((u) => u.type === 'folder') : []
+  const coveredByFolder = new Set<string>()
+  for (const u of folderUnits) for (const id of u.memberIds) coveredByFolder.add(id)
+  const placementOf = (f: FileRecord): Placement | undefined => {
+    const uid = org?.set.unitOf.get(f.id)
+    return uid ? org?.placements.get(uid) : undefined
+  }
+
   const candidates = files
-    .filter((f) => f.kind === 'file' || f.kind === 'bundle')
+    .filter((f) => (f.kind === 'file' || f.kind === 'bundle') && !coveredByFolder.has(f.id))
     .sort((a, b) => (a.root + '\0' + a.relPath).localeCompare(b.root + '\0' + b.relPath))
 
   const dupes = findDuplicates(candidates, settings)
@@ -264,6 +278,29 @@ export function buildPlan(input: PlannerInput): Plan {
       continue
     }
 
+    // Revision 1: a unit placement (rules or AI) decides the folder. Junk and sensitive files that
+    // only the rules saw keep the classic handling.
+    const rawPlacement = placementOf(f)
+    const placement =
+      rawPlacement &&
+      rule.category !== 'junk' &&
+      !(sensitive && rawPlacement.source === 'rule' && !PHOTO_CATS.has(d.category))
+        ? rawPlacement
+        : undefined
+    const unit = placement ? org?.units.get(placement.unitId) : undefined
+    if (placement) {
+      d = {
+        category: placement.kind,
+        confidence: placement.confidence,
+        reason: sensitive
+          ? `Hassas: ${f.sensitiveReason ?? 'işaretli'}. ${placement.reason}`
+          : placement.reason,
+        source: placement.source,
+        subcategory: placement.topic,
+      }
+      if (unit?.type === 'event') flags.push('event')
+    }
+
     const cat = cats.get(d.category) ?? cats.get('uncertain')
     const catName = cat?.nameTr ?? d.category
     const exif = parseYm(meta.exifDate)
@@ -289,13 +326,15 @@ export function buildPlan(input: PlannerInput): Plan {
     const rootName = path.basename(f.root)
     const relDir = primary
       ? primary.dir
-      : expandFolder(tpl, {
-          year: date.year,
-          month: date.month,
-          category: catName,
-          rootName,
-          event: eventOf.get(f.id),
-        })
+      : placement
+        ? placement.relDir
+        : expandFolder(tpl, {
+            year: date.year,
+            month: date.month,
+            category: catName,
+            rootName,
+            event: eventOf.get(f.id),
+          })
     if (primary) flags.push('sibling')
     decided.set(f.id, { category: primary?.category ?? d.category, dir: relDir })
 
@@ -382,6 +421,75 @@ export function buildPlan(input: PlannerInput): Plan {
       enabled,
       groupKey: `${tRoot}|${relDir}`,
       flags,
+      unitId: unit?.id,
+      unitTitle: placement?.title,
+      topic: placement?.topic,
+    })
+  }
+
+  // Folder units: one item for the whole folder (move or keep in place).
+  for (const u of folderUnits) {
+    const dir = u.dirId ? fileById.get(u.dirId) : undefined
+    if (!dir) continue
+    const p = org?.placements.get(u.id)
+    const src = absOf(dir)
+    const flags: ItemFlag[] = ['folder_unit']
+    if (u.memberIds.some((id) => fileById.get(id)?.sensitive)) flags.push('sensitive')
+    const base = {
+      category: p?.kind ?? u.kindHint,
+      subcategory: p?.topic,
+      confidence: p?.confidence ?? 0.9,
+      source: p?.source ?? ('rule' as const),
+      unitId: u.id,
+      unitTitle: p?.title ?? u.label,
+      topic: p?.topic,
+    }
+    const tRoot = targetRootFor(dir.root)
+    const target = p
+      ? path.join(tRoot, ...p.relDir.split('/').filter(Boolean), sanitizeSegment(dir.name))
+      : src
+    const keep =
+      !p ||
+      p.keepInPlace ||
+      settings.organize.existingFolders === 'keep' ||
+      pathKey(path.dirname(target)) === pathKey(path.dirname(src))
+    if (keep) {
+      items.push({
+        id: nextId(),
+        planId: input.planId,
+        fileId: dir.id,
+        sourcePath: src,
+        userEdited: false,
+        action: 'skip',
+        targetPath: src,
+        reason:
+          p && !p.keepInPlace && settings.organize.existingFolders !== 'keep'
+            ? `Zaten yerinde. ${p.reason}`
+            : (p?.reason ?? 'Derli toplu klasör; olduğu gibi bırakıldı.'),
+        enabled: false,
+        groupKey: '__folders',
+        flags,
+        ...base,
+      })
+      continue
+    }
+    const finalTarget = uniquePath(target, taken, (x) => pathKey(x) !== pathKey(src) && exists(x))
+    taken.add(pathKey(finalTarget))
+    const lowConf = base.confidence < lowTh
+    if (lowConf) flags.push('low_confidence')
+    items.push({
+      id: nextId(),
+      planId: input.planId,
+      fileId: dir.id,
+      sourcePath: src,
+      userEdited: false,
+      action: 'move',
+      targetPath: finalTarget,
+      reason: `${p.reason} (${u.memberIds.length} dosya, bölünmeden)`,
+      enabled: !lowConf,
+      groupKey: `${tRoot}|${p.relDir}`,
+      flags,
+      ...base,
     })
   }
 

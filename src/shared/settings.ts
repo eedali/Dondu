@@ -76,7 +76,7 @@ export const settingsSchema = z.object({
       thumbnailMaxEdge: z.union([z.literal(512), z.literal(768), z.literal(1024)]).default(768),
       groupBy: z.enum(['year', 'yearMonth', 'event']).default('yearMonth'),
       detectScreenshots: z.boolean().default(true),
-      screenshotTarget: z.string().default('Ekran Görüntüleri/{Yıl}'),
+      screenshotTarget: z.string().default('Ekran Görüntüleri/{Cihaz}/{Yıl}'),
       nearDuplicateThreshold: z.number().int().min(0).max(32).default(8),
       keepHeicJpgSiblingsTogether: z.boolean().default(true),
       useExifDateForFolder: z.boolean().default(true),
@@ -117,6 +117,21 @@ export const settingsSchema = z.object({
       minConfidence: z.number().min(0).max(1).default(0.9),
       onlyGenericNames: z.boolean().default(true),
       photos: z.boolean().default(false),
+    })
+    .prefault({}),
+
+  /** Revision 1: how folders are designed. */
+  organize: z
+    .object({
+      /** topic: AI designs topic folders; type: classic folders by file type. */
+      style: z.enum(['topic', 'type']).default('topic'),
+      /** Coherent existing folders: move as a whole (AI decides where) or leave in place. */
+      existingFolders: z.enum(['moveWhole', 'keep']).default('moveWhole'),
+      /** Free-text hint for the folder architect ("I develop games", "wedding next month"). */
+      hint: z.string().max(500).default(''),
+      maxDepth: z.number().int().min(1).max(5).default(3),
+      /** Never send image previews to a cloud provider (local LM Studio may still see them). */
+      cloudImages: z.boolean().default(true),
     })
     .prefault({}),
 

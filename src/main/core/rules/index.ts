@@ -343,19 +343,19 @@ export function classifyFile(f: FileRecord, meta: FileMeta, settings: Settings):
           reason: 'Kamera/telefon fotoğraf biçimi.',
           date: dateFromName(name) ?? mdate,
         }
+      if (ext === 'png' && meta.width && meta.height && isScreenSize(meta.width, meta.height))
+        return {
+          category: 'screenshots',
+          confidence: 0.85,
+          reason: 'Ekran çözünürlüğünde PNG.',
+          date: mdate,
+        }
       if (CAMERA_NAME_RE.test(folded))
         return {
           category: 'photos',
           confidence: 0.8,
           reason: 'Ad kamera fotoğrafı kalıbında.',
           date: dateFromName(name) ?? mdate,
-        }
-      if (ext === 'png' && meta.width && meta.height && isScreenSize(meta.width, meta.height))
-        return {
-          category: 'screenshots',
-          confidence: 0.6,
-          reason: 'Ekran çözünürlüğünde PNG.',
-          date: mdate,
         }
       return {
         category: 'images_other',

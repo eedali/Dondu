@@ -114,6 +114,8 @@ export type ItemFlag =
   | 'leaves_icloud'
   | 'bundle'
   | 'project'
+  | 'folder_unit'
+  | 'event'
 
 export interface PlanItem {
   id: string
@@ -134,6 +136,11 @@ export interface PlanItem {
   flags: ItemFlag[]
   /** For duplicates: id of the file that is kept. */
   duplicateOf?: string
+  /** Revision 1: the unit (folder / event / file) this item belongs to and its title. */
+  unitId?: string
+  unitTitle?: string
+  /** Free-text topic (AI) — used to remember the user's folder choices. */
+  topic?: string
   /** Read-only display helpers (not stored). */
   size?: number
   thumbPath?: string

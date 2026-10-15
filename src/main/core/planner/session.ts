@@ -7,6 +7,7 @@ import { sanitizeFileName, sanitizeRelDir } from '../naming'
 import { isInsideAny, pathKey } from '../platform/paths'
 import { namePattern } from '../rules'
 import { buildPlan, summarizePlan } from '.'
+import { organizeWithRules, type Organization } from '../organize'
 import path from 'node:path'
 
 /** Builds and stores a draft plan for a scan session. */
@@ -16,15 +17,20 @@ export function planFromSession(
   settings: Settings,
   ai?: Map<string, AIClassifyOutput>,
   aiSummary?: Plan['summary']['ai'],
+  organization?: Organization,
 ): Plan {
   const session = repos.sessions.get(sessionId)
   if (!session) throw new Error('scan session not found')
+  const files = repos.files.bySession(sessionId)
+  const metas = repos.files.metaBySession(sessionId)
   const plan = buildPlan({
     planId: randomUUID(),
     sessionId,
     roots: session.roots,
-    files: repos.files.bySession(sessionId),
-    metas: repos.files.metaBySession(sessionId),
+    files,
+    metas,
+    // Revision 1: units are always built (rules); the AI passes refine their placements.
+    organization: organization ?? organizeWithRules(files, metas, settings),
     settings,
     categories: repos.categories.all(),
     ai,

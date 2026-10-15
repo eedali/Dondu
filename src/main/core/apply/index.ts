@@ -330,7 +330,7 @@ export async function applyPlan(
     size: number,
     mtime: number,
   ): Promise<void> => {
-    const isDir = f.kind === 'bundle'
+    const isDir = f.kind !== 'file' // bundles and folder units
     await journal.op({ itemId: it.id, op: 'copy', src, dst, size, mtime }, () =>
       platform.copyWithMetadata(src, dst),
     )

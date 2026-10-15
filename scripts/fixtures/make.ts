@@ -16,6 +16,18 @@ export interface FixtureInfo {
   duplicates: [string, string][]
   bundles: string[]
   sensitive: string[]
+  /** Revision 1 scenarios (relative paths). */
+  topics: {
+    wedding: string[]
+    phoneScreenshots: string[]
+    pcScreenshots: string[]
+    documentPhotos: string[]
+    gameAssetFolder: string
+    sfxFolder: string
+    courseFolder: string
+    looseSfx: string[]
+    music: string[]
+  }
 }
 
 const yearDate = (y: number, m = 6, d = 15): Date => new Date(Date.UTC(y, m - 1, d, 10, 30, 0))
@@ -407,6 +419,108 @@ export async function makeFixtures(dir: string): Promise<FixtureInfo> {
   )
   await write('script.py', 'print("hi")\n', yearDate(2023))
 
+  // ---- revision 1: topic scenarios -------------------------------------------------------------
+  // A wedding: 8 photos + 1 video on the same afternoon (one event).
+  const wedding: string[] = []
+  for (let i = 0; i < 8; i++) {
+    const t = new Date(2023, 5, 17, 15, 20 * i, 0)
+    wedding.push(
+      await write(
+        `IMG_${7000 + i}.JPG`,
+        withExif(jpeg(i), { make: 'Apple', model: 'iPhone 14', date: t, gps: true }),
+        t,
+      ),
+    )
+  }
+  wedding.push(
+    await write(
+      'VID_20230617_163000.mp4',
+      Buffer.concat([
+        Buffer.from([0, 0, 0, 20]),
+        Buffer.from('ftypisom\0\0\0\0isom', 'ascii'),
+        Buffer.alloc(3000, 6),
+      ]),
+      new Date(2023, 5, 17, 16, 30),
+    ),
+  )
+
+  // Screenshots: iPhone (named like a photo!), Android, Windows.
+  const flat = (w: number, h: number, seed: number) =>
+    makePng(w, h, (x, y) => (y < 60 ? [30, 30, 40] : [245, 245, 248 - (seed % 9)]))
+  const phoneScreenshots = [
+    await write('IMG_5001.PNG', flat(1170, 2532, 1), yearDate(2024, 3, 5)),
+    await write(
+      'Screenshot_20240305-101112_WhatsApp.png',
+      flat(1080, 2400, 2),
+      yearDate(2024, 3, 5),
+    ),
+  ]
+  const pcScreenshots = [
+    await write('Screenshot 2024-03-05 101112.png', flat(1920, 1080, 3), yearDate(2024, 3, 5)),
+  ]
+
+  // A photographed document (no camera data, scanner-app name).
+  const documentPhotos = [
+    await write('CamScanner 05-03-2024 10.11.jpg', jpeg(2), yearDate(2024, 3, 5)),
+  ]
+
+  // A game asset pack (kept together), a sound-effects pack, a course with videos + PDFs.
+  await write(
+    'kenney_platformer-pack/Sprites/player.png',
+    gradient(31, 32, 32),
+    yearDate(2023, 2, 2),
+  )
+  await write(
+    'kenney_platformer-pack/Sprites/enemy.png',
+    gradient(32, 32, 32),
+    yearDate(2023, 2, 2),
+  )
+  await write(
+    'kenney_platformer-pack/Sprites/tiles.png',
+    gradient(33, 64, 32),
+    yearDate(2023, 2, 2),
+  )
+  await write('kenney_platformer-pack/Sounds/jump.wav', makeWav(0.3, 880), yearDate(2023, 2, 2))
+  await write('kenney_platformer-pack/License.txt', 'CC0', yearDate(2023, 2, 2))
+  for (const n of ['coin', 'laser', 'explosion', 'click', 'powerup'])
+    await write(
+      `retro sfx/${n}.wav`,
+      makeWav(0.2 + n.length / 20, 300 + n.length * 50),
+      yearDate(2022, 8, 8),
+    )
+  await write(
+    'Python Kursu/01 - Giriş.mp4',
+    Buffer.concat([
+      Buffer.from([0, 0, 0, 20]),
+      Buffer.from('ftypisom\0\0\0\0isom', 'ascii'),
+      Buffer.alloc(2500, 1),
+    ]),
+    yearDate(2024, 1, 10),
+  )
+  await write(
+    'Python Kursu/02 - Değişkenler.mp4',
+    Buffer.concat([
+      Buffer.from([0, 0, 0, 20]),
+      Buffer.from('ftypisom\0\0\0\0isom', 'ascii'),
+      Buffer.alloc(2600, 2),
+    ]),
+    yearDate(2024, 1, 11),
+  )
+  await write(
+    'Python Kursu/notlar.pdf',
+    await pdf(['Python Kursu', 'Ders 1: Giris', 'print("merhaba")']),
+    yearDate(2024, 1, 10),
+  )
+  await write(
+    'Python Kursu/odev-1.pdf',
+    await pdf(['Odev 1', 'Degiskenler']),
+    yearDate(2024, 1, 12),
+  )
+
+  // Loose sounds: a short effect and a longer untagged track.
+  const looseSfx = [await write('jump_01.wav', makeWav(0.4, 990), yearDate(2023, 5, 5))]
+  const music = [await write('sarki-demo.wav', makeWav(12, 440), yearDate(2021, 5, 5))]
+
   return {
     dir,
     files,
@@ -418,5 +532,16 @@ export async function makeFixtures(dir: string): Promise<FixtureInfo> {
     ],
     bundles,
     sensitive,
+    topics: {
+      wedding,
+      phoneScreenshots,
+      pcScreenshots,
+      documentPhotos,
+      gameAssetFolder: 'kenney_platformer-pack',
+      sfxFolder: 'retro sfx',
+      courseFolder: 'Python Kursu',
+      looseSfx,
+      music,
+    },
   }
 }

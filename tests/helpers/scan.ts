@@ -22,7 +22,7 @@ export const stubThumbnailer: Thumbnailer = {
       .digest()
     await fs.writeFile(out, 'thumb')
     const gray = new Uint8Array(72).map((_, i) => digest[i % 64]! ^ (i * 37))
-    return { width: 10, height: 10, gray9x8: gray }
+    return { gray9x8: gray }
   },
 }
 

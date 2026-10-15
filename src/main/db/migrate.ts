@@ -1,9 +1,11 @@
 import type { SqlDb } from './driver'
 import m001 from './migrations/001_init.sql?raw'
+import m002 from './migrations/002_topics.sql?raw'
 
 /** Ordered migrations. Never edit a shipped migration — add a new NNN_*.sql. */
 export const MIGRATIONS: { version: number; name: string; sql: string }[] = [
   { version: 1, name: '001_init', sql: m001 },
+  { version: 2, name: '002_topics', sql: m002 },
 ]
 
 export function migrate(db: SqlDb): number {
