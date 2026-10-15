@@ -1,7 +1,9 @@
 import type { AiTestResult } from '@shared/ipc'
 import type { AIClassifyOutput, AIEstimate, Plan } from '@shared/types'
 import { context } from '../context'
+import { app } from 'electron'
 import { AnthropicProvider } from '../core/ai/anthropic'
+import { FakeProvider } from '../core/ai/fake'
 import { LmStudioProvider } from '../core/ai/lmstudio'
 import { estimateAi, runAi } from '../core/ai/runner'
 import { ProviderError, type AIProvider } from '../core/ai/types'
@@ -13,6 +15,12 @@ export function currentProvider(): AIProvider | null {
   const s = ctx.settings.get()
   const categories = ctx.repos.categories.all()
   const corrections = s.ai.learnFromCorrections ? ctx.repos.corrections.recent(20) : []
+  // Dev tooling: a slow, free, deterministic provider for UI work (never in packaged builds).
+  if (!app.isPackaged && process.env['DONDU_FAKE_AI']) {
+    const fake = new FakeProvider({ batchSize: 4 })
+    fake.delayMs = Number(process.env['DONDU_FAKE_AI']) || 800
+    return fake
+  }
   if (s.ai.provider === 'anthropic') {
     const apiKey = ctx.secrets.get('anthropicApiKey')
     if (!apiKey) throw new ProviderError('Anthropic API anahtarı girilmemiş.', 'auth')
@@ -67,7 +75,7 @@ export async function estimateForSession(sessionId: string): Promise<AIEstimate>
 export async function runAiForSession(
   sessionId: string,
   signal: AbortSignal,
-  onProgress: (done: number, total: number) => void,
+  onProgress: (done: number, total: number, usd: number) => void,
 ): Promise<{ results: Map<string, AIClassifyOutput>; summary: Plan['summary']['ai'] }> {
   const ctx = context()
   const provider = currentProvider()

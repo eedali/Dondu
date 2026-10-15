@@ -46,7 +46,7 @@ export function registerPlanIpc(): void {
   handle('plan:build', async ({ sessionId, useAI }) =>
     enrich(await buildPlanForSession(sessionId, useAI)),
   )
-  handle('plan:cancel', () => cancelPlanBuild())
+  handle('plan:cancel', (mode) => cancelPlanBuild(mode))
   handle('plan:update', (planId, itemIds, patch) => {
     const c = context()
     return enrich(

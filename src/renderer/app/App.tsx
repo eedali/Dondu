@@ -12,6 +12,7 @@ import { HistoryScreen } from '../features/history/HistoryScreen'
 import { SettingsScreen } from '../features/settings/SettingsScreen'
 import { OnboardingScreen } from '../features/onboarding/OnboardingScreen'
 import { HelpScreen } from '../features/help/HelpScreen'
+import { PlanningPanel } from '../features/plan/PlanningPanel'
 
 export function App(): React.JSX.Element {
   const { i18n } = useTranslation()
@@ -65,6 +66,7 @@ export function App(): React.JSX.Element {
   return (
     <>
       {screen}
+      <PlanningPanel />
       <RecoveryDialog />
       <ErrorToast />
     </>

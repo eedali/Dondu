@@ -12,7 +12,7 @@ export function ErrorToast(): React.JSX.Element | null {
   return (
     <div
       role="alert"
-      className="fixed bottom-20 right-6 z-40 flex max-w-md items-start gap-3 rounded-md border border-line bg-surface px-4 py-3 shadow-lg"
+      className="fixed top-20 right-6 z-50 flex max-w-md items-start gap-3 rounded-md border border-line bg-surface px-4 py-3 shadow-lg"
     >
       <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-error" />
       <span className="text-[13px]">{text}</span>

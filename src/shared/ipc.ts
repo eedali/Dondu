@@ -42,10 +42,15 @@ export interface FolderPickResult {
 }
 
 export interface PlanProgress {
-  phase: 'rules' | 'ai' | 'planning' | 'done'
+  phase: 'rules' | 'ai' | 'organize' | 'planning' | 'done' | 'cancelled'
   done: number
   total: number
   message?: string
+  /** Money spent so far in this build (cloud providers). */
+  usd?: number
+  startedAt: number
+  /** Stopping is being processed (in-flight requests are being cut). */
+  stopping?: boolean
 }
 
 export interface QuarantineInfo {
@@ -104,7 +109,7 @@ export interface IpcInvokeMap {
   'ai:test': { args: []; result: AiTestResult }
   'ai:models': { args: []; result: string[] }
   'plan:build': { args: [opts: { sessionId: string; useAI: boolean }]; result: Plan }
-  'plan:cancel': { args: []; result: void }
+  'plan:cancel': { args: [mode: 'partial' | 'abort']; result: void }
   'plan:get': { args: [planId?: string]; result: Plan | null }
   'file:details': { args: [fileId: string]; result: { file: FileRecord; meta: FileMeta } | null }
   'plan:update': {

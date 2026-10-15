@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { BrowserWindow, dialog } from 'electron'
+import type { PlanProgress } from '@shared/ipc'
 import type { Plan } from '@shared/types'
 import { context } from '../context'
 import { exportHtml, exportJson, exportMarkdown } from '../core/planner/export'
@@ -9,36 +10,93 @@ import { emit } from '../ipc/registry'
 import { runAiForSession } from './ai'
 import { log } from './log'
 
-let aiController: AbortController | null = null
+/** The plan build in progress (one at a time). */
+interface PlanJob {
+  controller: AbortController
+  mode: 'run' | 'partial' | 'abort'
+  startedAt: number
+  usd: number
+  last?: Omit<PlanProgress, 'startedAt' | 'usd' | 'stopping'>
+}
+let job: PlanJob | null = null
 
-export async function buildPlanForSession(sessionId: string, useAI: boolean): Promise<Plan> {
-  const ctx = context()
-  const settings = ctx.settings.get()
-  emit('plan:progress', { phase: 'rules', done: 0, total: 1 })
-  let ai: Awaited<ReturnType<typeof runAiForSession>> | undefined
-  if (useAI && settings.ai.provider !== 'none') {
-    aiController = new AbortController()
-    try {
-      ai = await runAiForSession(sessionId, aiController.signal, (done, total) =>
-        emit('plan:progress', { phase: 'ai', done, total }),
-      )
-    } catch (e) {
-      // AI problems never block planning: rules still produce a plan (docs/01 §8).
-      log.error(`ai step failed: ${(e as Error).message}`)
-      emit('app:error', { message: 'ai_failed' })
-    } finally {
-      aiController = null
-    }
+export class PlanCancelled extends Error {
+  constructor() {
+    super('plan_cancelled')
   }
-  emit('plan:progress', { phase: 'planning', done: 0, total: 1 })
-  const plan = planFromSession(ctx.repos, sessionId, settings, ai?.results, ai?.summary)
-  emit('plan:progress', { phase: 'done', done: 1, total: 1 })
-  log.info(`plan ${plan.id} items=${plan.items.length} move=${plan.summary.move}`)
-  return plan
 }
 
-export function cancelPlanBuild(): void {
-  aiController?.abort()
+export async function buildPlanForSession(sessionId: string, useAI: boolean): Promise<Plan> {
+  if (job) throw new Error('plan_running')
+  const ctx = context()
+  const settings = ctx.settings.get()
+  const current: PlanJob = {
+    controller: new AbortController(),
+    mode: 'run',
+    startedAt: Date.now(),
+    usd: 0,
+  }
+  job = current
+  const progress = (p: Omit<PlanProgress, 'startedAt' | 'usd' | 'stopping'>): void => {
+    current.last = p
+    emit('plan:progress', {
+      ...p,
+      startedAt: current.startedAt,
+      usd: current.usd,
+      stopping: current.mode !== 'run',
+    })
+  }
+  try {
+    progress({ phase: 'rules', done: 0, total: 1 })
+    let ai: Awaited<ReturnType<typeof runAiForSession>> | undefined
+    if (useAI && settings.ai.provider !== 'none') {
+      try {
+        ai = await runAiForSession(sessionId, current.controller.signal, (done, total, usd) => {
+          current.usd = usd
+          progress({ phase: 'ai', done, total })
+        })
+      } catch (e) {
+        if (current.mode === 'abort') throw new PlanCancelled()
+        // AI problems never block planning: rules still produce a plan (docs/01 §8).
+        if (current.mode === 'run') {
+          log.error(`ai step failed: ${(e as Error).message}`)
+          emit('app:error', { message: 'ai_failed' })
+        }
+      }
+    }
+    if (current.mode === 'abort') throw new PlanCancelled()
+    progress({ phase: 'planning', done: 0, total: 1 })
+    const plan = planFromSession(ctx.repos, sessionId, settings, ai?.results, ai?.summary)
+    progress({ phase: 'done', done: 1, total: 1 })
+    log.info(
+      `plan ${plan.id} items=${plan.items.length} move=${plan.summary.move}${current.mode === 'partial' ? ' (stopped early)' : ''}`,
+    )
+    return plan
+  } catch (e) {
+    if (e instanceof PlanCancelled) {
+      log.info('plan build cancelled by user')
+      progress({ phase: 'cancelled', done: 0, total: 0 })
+    }
+    throw e
+  } finally {
+    job = null
+  }
+}
+
+/**
+ * Stop the running build. `partial`: keep the AI answers received so far and plan the rest with
+ * rules. `abort`: no plan at all. Either way in-flight requests are cut immediately.
+ */
+export function cancelPlanBuild(mode: 'partial' | 'abort'): void {
+  if (!job) return
+  job.mode = mode
+  job.controller.abort()
+  emit('plan:progress', {
+    ...(job.last ?? { phase: 'ai', done: 0, total: 0 }),
+    startedAt: job.startedAt,
+    usd: job.usd,
+    stopping: true,
+  })
 }
 
 export async function exportPlan(

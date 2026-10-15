@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { api } from '../../app/api'
+import { api, errorMessage } from '../../app/api'
 import { useApp } from '../../app/store'
 import { Button } from '../../components/ui'
 import { EstimateDialog } from './EstimateDialog'
@@ -41,9 +41,12 @@ export async function buildPlan(sessionId: string, useAI: boolean): Promise<void
   useApp.setState({ planning: true, planProgress: null })
   try {
     const plan = await api.invoke('plan:build', { sessionId, useAI })
-    useApp.setState({ plan, route: 'report' })
+    // Planning runs in the background: only jump to the report if the user is still waiting here.
+    const route = useApp.getState().route
+    useApp.setState({ plan, route: route === 'scan' || route === 'folders' ? 'report' : route })
   } catch (e) {
-    setError(e)
+    // A user stop ("Tamamen vazgeç") is not an error.
+    if (!errorMessage(e).includes('plan_cancelled')) setError(e)
   } finally {
     useApp.setState({ planning: false })
   }

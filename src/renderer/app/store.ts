@@ -86,7 +86,7 @@ export const useApp = create<AppState>((set, get) => ({
           set({ summary: s, plan: plan && plan.sessionId === s?.sessionId ? plan : null })
           if (s && autoplan) {
             const { buildPlan } = await import('../features/plan/PlanStart')
-            await buildPlan(s.sessionId, false)
+            await buildPlan(s.sessionId, get().settings?.ai.provider !== 'none')
             const built = get().plan
             if (autoapply && built) {
               // Dev-only end-to-end check: approve and apply without clicking.

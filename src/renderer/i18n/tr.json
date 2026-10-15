@@ -134,7 +134,8 @@
     "plan_not_draft": "Onaylanmış plan değiştirilemez; önce kopyasını oluşturun.",
     "target_outside_roots": "Hedef, seçili klasörlerin dışında olamaz.",
     "ai_failed": "Yapay zekâ adımı çalışmadı; plan yalnızca kurallarla oluşturuldu.",
-    "trash_failed": "Çöpe gönderilemedi."
+    "trash_failed": "Çöpe gönderilemedi.",
+    "plan_running": "Zaten bir plan hazırlanıyor."
   },
   "estimate": {
     "title": "Yapay zekâ tahmini",
@@ -823,5 +824,23 @@
         "Sonra yeniden tarayın."
       ]
     }
+  },
+  "planning": {
+    "title": "Plan hazırlanıyor",
+    "stopping": "Durduruluyor…",
+    "phase": {
+      "rules": "Kurallar uygulanıyor",
+      "ai": "Yapay zekâ dosyalara bakıyor ({{done}} / {{total}} parti)",
+      "organize": "Klasör yapısı kuruluyor ({{done}} / {{total}})",
+      "planning": "Plan oluşturuluyor",
+      "done": "Bitti",
+      "cancelled": "Durduruldu"
+    },
+    "spent": "Harcanan: ~${{usd}}",
+    "askStop": "Nasıl durdurayım? Gelen yanıtlar önbellekte kalır; tekrar başlatınca yeniden ödeme yapılmaz.",
+    "buildPartial": "Şimdiye kadarkilerle planı oluştur",
+    "abort": "Tamamen vazgeç",
+    "keepGoing": "Devam etsin",
+    "stop": "Durdur"
   }
 }

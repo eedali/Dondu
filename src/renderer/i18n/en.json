@@ -134,7 +134,8 @@
     "plan_not_draft": "An approved plan cannot change; make a copy first.",
     "target_outside_roots": "The target must be inside the selected folders.",
     "ai_failed": "The AI step did not work; the plan was built with rules only.",
-    "trash_failed": "Could not send to the trash."
+    "trash_failed": "Could not send to the trash.",
+    "plan_running": "A plan is already being built."
   },
   "estimate": {
     "title": "AI estimate",
@@ -823,5 +824,23 @@
         "Then scan again."
       ]
     }
+  },
+  "planning": {
+    "title": "Building the plan",
+    "stopping": "Stopping…",
+    "phase": {
+      "rules": "Applying rules",
+      "ai": "AI is looking at the files ({{done}} / {{total}} batches)",
+      "organize": "Designing the folder structure ({{done}} / {{total}})",
+      "planning": "Building the plan",
+      "done": "Done",
+      "cancelled": "Stopped"
+    },
+    "spent": "Spent: ~${{usd}}",
+    "askStop": "How should I stop? Answers received so far stay cached; restarting costs nothing extra for them.",
+    "buildPartial": "Build the plan with what we have",
+    "abort": "Give up entirely",
+    "keepGoing": "Keep going",
+    "stop": "Stop"
   }
 }

@@ -17,6 +17,8 @@ export class FakeProvider implements AIProvider {
   readonly received: AIClassifyInput[][] = []
   failNext = 0
   failWith: Error | null = null
+  /** Simulated latency per request (honours the abort signal). */
+  delayMs = 0
 
   private answer: FakeAnswer
 
@@ -38,6 +40,13 @@ export class FakeProvider implements AIProvider {
 
   async classify(batch: AIClassifyInput[], signal: AbortSignal): Promise<ClassifyResult> {
     if (signal.aborted) throw new Error('aborted')
+    if (this.delayMs)
+      await new Promise<void>((resolve, reject) => {
+        const t = setTimeout(resolve, this.delayMs)
+        signal.addEventListener('abort', () => (clearTimeout(t), reject(new Error('aborted'))), {
+          once: true,
+        })
+      })
     this.received.push(batch)
     if (this.failNext > 0) {
       this.failNext--

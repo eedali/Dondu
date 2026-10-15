@@ -177,11 +177,11 @@ export async function runAi(
   files: FileRecord[],
   metas: Map<string, FileMeta>,
   signal: AbortSignal,
-  onProgress: (done: number, total: number) => void = () => undefined,
+  onProgress: (done: number, total: number, usd: number) => void = () => undefined,
   opts: { sleep?: (ms: number) => Promise<void>; maxAttempts?: number } = {},
 ): Promise<AiRunResult> {
   const { provider, settings, repos } = deps
-  const sleep = opts.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)))
+  const sleep = opts.sleep ?? ((ms: number) => abortableSleep(ms, signal))
   const maxAttempts = opts.maxAttempts ?? 5
 
   const est = await estimateAi(deps, files, metas)
@@ -196,7 +196,9 @@ export async function runAi(
   const usage: Usage = { tokensIn: 0, tokensOut: 0, cacheWrite: 0, cacheRead: 0 }
   let failedBatches = 0
   let done = 0
-  onProgress(0, batches.length)
+  const spent = (): number =>
+    provider.id === 'anthropic' ? usageCost(usage, settings.ai.anthropic.useBatchApi) : 0
+  onProgress(0, batches.length, 0)
 
   const accept = (batch: Prepared[], res: { results: AIClassifyOutput[]; usage: Usage }): void => {
     usage.tokensIn += res.usage.tokensIn
@@ -222,12 +224,17 @@ export async function runAi(
   }
 
   if (settings.ai.anthropic.useBatchApi && provider.classifyMany && batches.length) {
-    const outs = await provider.classifyMany(
-      batches.map((b) => b.map((p) => p.input)),
-      signal,
-      (n) => onProgress(n, batches.length),
-    )
-    outs.forEach((o, i) => (o instanceof Error ? failedBatches++ : accept(batches[i]!, o)))
+    try {
+      const outs = await provider.classifyMany(
+        batches.map((b) => b.map((p) => p.input)),
+        signal,
+        (n) => onProgress(n, batches.length, spent()),
+      )
+      outs.forEach((o, i) => (o instanceof Error ? failedBatches++ : accept(batches[i]!, o)))
+    } catch (e) {
+      // Stopped by the user: keep whatever is cached, plan the rest with rules.
+      if (!signal.aborted) throw e
+    }
   } else {
     let next = 0
     let fatal: Error | null = null
@@ -258,7 +265,7 @@ export async function runAi(
             break
           }
         }
-        onProgress(++done, batches.length)
+        onProgress(++done, batches.length, spent())
       }
     }
     await Promise.all(Array.from({ length: Math.max(1, provider.concurrency) }, worker))
@@ -275,4 +282,18 @@ export async function runAi(
       failedBatches,
     },
   }
+}
+
+/** setTimeout that ends early when the run is stopped (retry back-off must not block a cancel). */
+export function abortableSleep(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    if (signal.aborted) return resolve()
+    const t = setTimeout(done, ms)
+    function done(): void {
+      clearTimeout(t)
+      signal.removeEventListener('abort', done)
+      resolve()
+    }
+    signal.addEventListener('abort', done, { once: true })
+  })
 }

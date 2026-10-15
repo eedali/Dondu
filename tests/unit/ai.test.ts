@@ -479,3 +479,49 @@ describe.runIf(process.env['DONDU_LIVE_AI'] === '1' && !!process.env['ANTHROPIC_
     }, 120_000)
   },
 )
+
+describe('stopping a plan build (revision 3)', () => {
+  it('cuts in-flight requests and returns the answers received so far', async () => {
+    const { repos, sessionId, settings } = await scanFixture()
+    settings.ai.mode = 'all'
+    settings.ai.cacheEnabled = false
+    settings.ai.batchSize = 4
+    const provider = new FakeProvider({ batchSize: 4 })
+    provider.delayMs = 300
+    const ac = new AbortController()
+    let batches = 0
+    const t0 = Date.now()
+    const res = await runAi(
+      { repos, provider, settings, categories: DEFAULT_CATEGORIES },
+      repos.files.bySession(sessionId),
+      repos.files.metaBySession(sessionId),
+      ac.signal,
+      (done, total) => {
+        batches = total
+        if (done === 2) ac.abort()
+      },
+    )
+    expect(Date.now() - t0).toBeLessThan(2000)
+    expect(batches).toBeGreaterThan(4)
+    expect(res.results.size).toBeGreaterThan(0)
+    expect(res.results.size).toBeLessThan(batches * 4)
+  })
+
+  it('does not wait out a long retry back-off after a stop', async () => {
+    const { repos, sessionId, settings } = await scanFixture()
+    settings.ai.cacheEnabled = false
+    const provider = new FakeProvider()
+    provider.failNext = 100
+    provider.failWith = new RetryableError('rate limited', 60_000)
+    const ac = new AbortController()
+    setTimeout(() => ac.abort(), 100)
+    const t0 = Date.now()
+    await runAi(
+      { repos, provider, settings, categories: DEFAULT_CATEGORIES },
+      repos.files.bySession(sessionId),
+      repos.files.metaBySession(sessionId),
+      ac.signal,
+    )
+    expect(Date.now() - t0).toBeLessThan(2000)
+  })
+})
