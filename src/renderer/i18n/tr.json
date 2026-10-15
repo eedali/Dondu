@@ -1,0 +1,22 @@
+{
+  "app": {
+    "name": "Döndü",
+    "tagline": "Dosyalarınız yerine döner."
+  },
+  "nav": {
+    "label": "Ana gezinti",
+    "folders": "Klasörler",
+    "scan": "Tarama",
+    "report": "Rapor",
+    "history": "Geçmiş",
+    "settings": "Ayarlar"
+  },
+  "status": {
+    "idle": "Hazır",
+    "connected": "Hazır · {{platform}} · v{{version}}"
+  },
+  "placeholder": {
+    "title": "Bu ekran yakında burada",
+    "body": "Döndü adım adım inşa ediliyor."
+  }
+}

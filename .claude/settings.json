@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm ci)",
+      "Bash(npm run *)",
+      "Bash(npm test*)",
+      "Bash(npx vitest *)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx prettier *)",
+      "Bash(npx electron-builder *)",
+      "Bash(npx electron-vite *)",
+      "Bash(node *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch*)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git tag *)",
+      "WebFetch(domain:platform.claude.com)",
+      "WebFetch(domain:docs.claude.com)",
+      "WebFetch(domain:www.electronjs.org)",
+      "WebFetch(domain:electron-vite.org)",
+      "WebFetch(domain:www.electron.build)",
+      "WebFetch(domain:www.npmjs.com)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git rebase *)",
+      "Bash(rm *)",
+      "Bash(del *)",
+      "Bash(Remove-Item *)"
+    ],
+    "deny": ["Read(./.env)", "Read(./.env.*)", "Read(./**/*.pem)", "Read(./**/*.p12)"]
+  }
+}

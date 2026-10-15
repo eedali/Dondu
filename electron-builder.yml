@@ -1,0 +1,74 @@
+appId: com.dondu.app
+productName: Döndü
+copyright: Copyright © 2026 Bülent
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**
+  - resources/**
+  - package.json
+  - '!**/*.map'
+asarUnpack:
+  - resources/**
+  - '**/*.node'
+extraMetadata:
+  main: ./out/main/index.js
+
+mac:
+  executableName: Dondu
+  artifactName: Dondu-${version}-${arch}.${ext}
+  category: public.app-category.productivity
+  identity: null
+  hardenedRuntime: false
+  icon: build/icon.icns
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  extendInfo:
+    CFBundleName: Dondu
+    CFBundleDisplayName: Döndü
+    CFBundleDevelopmentRegion: tr
+    LSHasLocalizedDisplayName: true
+    NSDesktopFolderUsageDescription: Döndü, Masaüstü'ndeki dosyaları düzenlemek için erişim istiyor. / Döndü needs access to organise files on your Desktop.
+    NSDocumentsFolderUsageDescription: Döndü, Belgeler klasöründeki dosyaları düzenlemek için erişim istiyor. / Döndü needs access to organise files in Documents.
+    NSDownloadsFolderUsageDescription: Döndü, İndirilenler klasöründeki dosyaları düzenlemek için erişim istiyor. / Döndü needs access to organise files in Downloads.
+    NSRemovableVolumesUsageDescription: Döndü, seçtiğiniz harici diskteki dosyaları düzenlemek için erişim istiyor. / Döndü needs access to organise files on the external drive you selected.
+    NSNetworkVolumesUsageDescription: Döndü, seçtiğiniz ağ birimindeki dosyaları düzenlemek için erişim istiyor. / Döndü needs access to organise files on the network volume you selected.
+
+dmg:
+  title: Döndü ${version}
+  artifactName: Dondu-${version}-${arch}.${ext}
+  contents:
+    - x: 140
+      y: 190
+    - x: 400
+      y: 190
+      type: link
+      path: /Applications
+    - x: 270
+      y: 330
+      type: file
+      path: build/OKU-BENİ.txt
+
+win:
+  executableName: Dondu
+  artifactName: Dondu-Setup-${version}.${ext}
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: Döndü
+  uninstallDisplayName: Döndü
+
+linux:
+  executableName: dondu
+  target: [dir]
+
+npmRebuild: true
+publish: null

@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+/* Theme tokens — see docs/08-TASARIM.md §2. Colours follow the brand logo (logo/). */
+:root {
+  --bg: #f6f7fa;
+  --surface: #ffffff;
+  --surface-2: #f0f2f7;
+  --text: #1a1f3a;
+  --muted: #5f6478;
+  --line: #e3e5ec;
+  --accent: #3d5afe;
+  --accent-hover: #2f49e0;
+  --accent-soft: #e8ecff;
+  --accent-text: #2f49e0;
+  --on-accent: #ffffff;
+  --warn: #a9741b;
+  --warn-soft: #fbf1df;
+  --error: #b3412f;
+  --error-soft: #f8e6e2;
+  --sensitive: #5b4c9c;
+  --sensitive-soft: #ece8f8;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #12141f;
+  --surface: #1b1e2c;
+  --surface-2: #232738;
+  --text: #eceef5;
+  --muted: #9a9eb2;
+  --line: #2a2e40;
+  --accent: #5b74ff;
+  --accent-hover: #7088ff;
+  --accent-soft: #232a52;
+  --accent-text: #8fa2ff;
+  --on-accent: #ffffff;
+  --warn: #d9a54a;
+  --warn-soft: #3a2f1a;
+  --error: #e0715e;
+  --error-soft: #3d221d;
+  --sensitive: #a796e6;
+  --sensitive-soft: #2c2645;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-error: var(--error);
+  --color-error-soft: var(--error-soft);
+  --color-sensitive: var(--sensitive);
+  --color-sensitive-soft: var(--sensitive-soft);
+  --font-sans: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+input,
+textarea,
+.selectable {
+  user-select: text;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.dondu-logo-dark {
+  display: none;
+}
+:root[data-theme='dark'] .dondu-logo-dark {
+  display: inline;
+}
+:root[data-theme='dark'] .dondu-logo-light {
+  display: none;
+}

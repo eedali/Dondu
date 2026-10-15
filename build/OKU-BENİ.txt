@@ -1,0 +1,32 @@
+Döndü — Kurulum (macOS)
+========================
+
+1. Dondu.app'i yandaki "Applications" (Uygulamalar) klasörüne sürükleyin.
+
+2. Döndü henüz Apple tarafından imzalanmadığı için ilk açılışta macOS
+   "geliştirici doğrulanamadı" veya "hasarlı" uyarısı verebilir. Çözüm:
+
+   Terminal'i açın (Uygulamalar > İzlenceler > Terminal) ve şunu yapıştırın:
+
+       xattr -dr com.apple.quarantine /Applications/Dondu.app
+
+   Enter'a basın, sonra Döndü'yü normal şekilde açın.
+
+   Alternatif: Uygulamalar klasöründe Dondu'ya sağ tıklayın > Aç > Aç.
+
+3. İlk taramada macOS klasörlere erişim izni sorar; "İzin Ver" deyin.
+   Daha sorunsuz bir yol: Sistem Ayarları > Gizlilik ve Güvenlik >
+   Tam Disk Erişimi > Döndü'yü ekleyin.
+
+Döndü hiçbir dosyayı silmez. Her işlem Geçmiş ekranından geri alınabilir.
+
+---
+
+Döndü — Install (macOS)
+
+1. Drag Dondu.app into Applications.
+2. Döndü is not signed by Apple yet. If macOS says the app is damaged or
+   from an unidentified developer, open Terminal and run:
+       xattr -dr com.apple.quarantine /Applications/Dondu.app
+   or right-click Dondu in Applications > Open > Open.
+3. Allow folder access when macOS asks (or grant Full Disk Access).

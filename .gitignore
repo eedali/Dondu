@@ -1,0 +1,39 @@
+# Dependencies / build
+node_modules/
+dist/
+out/
+release/
+build/icon.iconset/
+*.tsbuildinfo
+.vite/
+.cache/
+
+# Env & secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+
+# Local app data / test output
+fixtures-out/
+tmp/
+coverage/
+*.sqlite
+*.sqlite-journal
+*.log
+
+# Claude Code local-only settings
+.claude/settings.local.json
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+._*
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json

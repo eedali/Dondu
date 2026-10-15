@@ -1,0 +1,81 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # Hızlı kontrol: her push/PR'da lint + typecheck + test (Linux, ucuz)
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+
+  # Paketleme: yalnızca etiketle (v0.1.0 gibi) veya elle tetiklenince.
+  # macOS paketi Windows'ta üretilemez; bu iş onu GitHub'ın Mac runner'ında yapar.
+  package:
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      # Sertifika yok: electron-builder imza aramasın (macOS'ta ad-hoc imza kalır)
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Package (electron-builder)
+        run: npm run package -- --publish never
+      - name: Verify ad-hoc signature (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          APP=$(find dist -maxdepth 3 -name "*.app" | head -n 1)
+          echo "Verifying $APP"
+          codesign --verify --deep --strict --verbose=2 "$APP" || (echo "::error::codesign verify failed" && exit 1)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dondu-${{ runner.os }}
+          if-no-files-found: error
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/*.exe
+            dist/*.blockmap
+            dist/latest*.yml
+
+  release:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true

@@ -1,0 +1,22 @@
+{
+  "app": {
+    "name": "Döndü",
+    "tagline": "Your files, back in place."
+  },
+  "nav": {
+    "label": "Main navigation",
+    "folders": "Folders",
+    "scan": "Scan",
+    "report": "Report",
+    "history": "History",
+    "settings": "Settings"
+  },
+  "status": {
+    "idle": "Ready",
+    "connected": "Ready · {{platform}} · v{{version}}"
+  },
+  "placeholder": {
+    "title": "This screen is coming soon",
+    "body": "Döndü is being built step by step."
+  }
+}
