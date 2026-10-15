@@ -72,6 +72,21 @@ jobs:
             echo "Verifying $APP"
             codesign --verify --deep --strict --verbose=2 "$APP"
           done
+      # Paketlenmiş uygulamayı gerçekten açar: pencereyi çizip ekran görüntüsü alır ve kapanır.
+      # Açılışta çöken bir paket Release'e hiç yüklenmez.
+      - name: Launch smoke test (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          APP=$(find dist -maxdepth 2 -name "*.app" -path "*mac-arm64*" | head -n 1)
+          SHOT="$RUNNER_TEMP/smoke.png"
+          set +e
+          # macOS has no `timeout`; perl's alarm kills a hung app after 90 s.
+          DONDU_SMOKE_TEST=1 DONDU_SCREENSHOT="$SHOT" DONDU_USERDATA="$RUNNER_TEMP/userdata" \
+            perl -e 'alarm 90; exec @ARGV' "$APP/Contents/MacOS/Dondu"
+          CODE=$?
+          if [ $CODE -ne 0 ]; then echo "::error::$APP exited with code $CODE (crash or hang)"; exit 1; fi
+          test -s "$SHOT" || echo "::warning::app exited cleanly but wrote no screenshot"
+          echo "Launched $APP and it quit cleanly"
       - name: Upload to GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         shell: bash

@@ -41,6 +41,7 @@
 - Konu düzeni gerçek Claude ile bu makinede denenmedi (API anahtarı yok); iki geçiş sahte sağlayıcıyla test edildi. İstem kalitesi ilk gerçek denemede gözden geçirilmeli
 - Durdurulunca "anla" yarıda kaldıysa klasör mimarı çalışmaz; anlaşılmayanlar kural yerleşimini kullanır
 - CI: `mac.identity: null` imzayı tamamen kapatıyordu; ad-hoc imza artık `build/after-pack.cjs`'de. Etiketli derlemeler artifact kotası yerine doğrudan Release'e yüklenir (özel depo, 500 MB kota)
+- macOS: `extendInfo.CFBundleName` yardımcı süreç adlarıyla (`Döndü Helper.app`) uyuşmazsa uygulama açılışta çöker (v0.2.0'ın ilk Mac paketi). `after-pack.cjs` bunu derlemede yakalar; CI paketi Mac'te gerçekten açıp kapanmasını bekler
 - Paketli uygulamada pdfjs, kullanılmayan canvas modülü için konsola zararsız uyarılar basıyor
 - Geliştirme araçları (yalnızca paketlenmemiş uygulama): `DONDU_SCREENSHOT=<png>` pencere görüntüsü alıp kapanır; `DONDU_USERDATA=<dir>` ayrı veri klasörü; `DONDU_DEV_ROOTS=<yol>` kökleri ayarlar; `DONDU_AUTOSCAN=1`, `DONDU_AUTOPLAN=1`, `DONDU_AUTOAPPLY=1`, `DONDU_ROUTE=<ekran>`
 - Değişen kaynak dosyalar ön kontrolde yalnızca "atla" ile geçilebiliyor (doc "yine de uygula" seçeneği öneriyor; güvenlik için şimdilik yok)
