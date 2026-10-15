@@ -4,7 +4,9 @@ import type { AIClassifyInput } from '@shared/types'
  * Cost model (docs/03 §7). Prices per 1M tokens for claude-haiku-5-5 with prompts ≤100K tokens.
  * The newer tokenizer produces ~30% more tokens than character heuristics suggest.
  */
-export const HAIKU_PRICES = {
+import type { Prices } from '@shared/models'
+
+export const HAIKU_PRICES: Prices = {
   input: 0.1,
   output: 0.5,
   cacheWrite: 0.125,
@@ -51,7 +53,7 @@ export interface CostBreakdown {
 export function estimateRun(
   files: AIClassifyInput[],
   requests: number,
-  opts: { imageEdge?: number; batchApi?: boolean; prices?: typeof HAIKU_PRICES } = {},
+  opts: { imageEdge?: number; batchApi?: boolean; prices?: Prices } = {},
 ): CostBreakdown {
   const p = opts.prices ?? HAIKU_PRICES
   if (!files.length || !requests)
@@ -75,7 +77,7 @@ export function estimateRun(
 export function usageCost(
   u: { tokensIn: number; tokensOut: number; cacheWrite: number; cacheRead: number },
   batchApi = false,
-  p = HAIKU_PRICES,
+  p: Prices = HAIKU_PRICES,
 ): number {
   const usd =
     (u.tokensIn * p.input +

@@ -130,7 +130,6 @@ export const AI_FIELDS: FieldDef[] = [
 ]
 
 export const ANTHROPIC_FIELDS: FieldDef[] = [
-  { key: 'ai.anthropic.model', type: 'text' },
   { key: 'ai.anthropic.effort', type: 'select', options: ['low', 'medium'] },
   { key: 'ai.anthropic.useBatchApi', type: 'bool' },
 ]

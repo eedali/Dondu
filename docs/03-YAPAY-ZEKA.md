@@ -34,9 +34,21 @@ Doğrulanmış bilgiler (Claude Platform docs, Ekim 2026):
 - **`temperature`, `top_p`, `top_k` gönderilmez** (400 hatası verir). Uyarlanabilir düşünme varsayılan açık → sınıflandırma için `effort: "low"`.
 - Tokenizer öncekine göre ~%30 daha fazla token üretir; tahminlerde bu çarpan uygulanır.
 
-İstek biçimi: `messages.create` + **tool use** ile zorunlu JSON (`tool_choice: {type:'tool', name:'classify_files'}`); araç şeması `docs/prompts/classify-schema.json`. Sistem istemi `docs/prompts/classify-system.md`. Görseller `image` içerik bloğu (base64 JPEG). Hata durumunda (geçersiz JSON, eksik id) o parti kurallarla devam eder ve raporda "AI yanıt vermedi" notu düşülür.
+İstek biçimi (Revizyon 2): `messages.create` + **yapılandırılmış çıktı** (`output_config.format: {type: 'json_schema'}`); şema `docs/prompts/classify-schema.json` içindeki `input_schema` (desteklenmeyen `maxLength/minimum/pattern` gönderilmeden önce ayıklanır, istemci tarafında zod ile doğrulanır). Zorunlu `tool_choice` kullanılmaz: Sonnet 5.5 ve Opus 5.5 bunu 400 ile reddeder. Sistem istemi `docs/prompts/classify-system.md`. Görseller `image` içerik bloğu (base64 JPEG). Hata durumunda (geçersiz JSON, eksik id) o parti kurallarla devam eder ve raporda "AI yanıt vermedi" notu düşülür.
 
 Anahtar: Ayarlar → Yapay zekâ → "Anthropic API anahtarı"; `safeStorage.encryptString` ile saklanır; "Bağlantıyı sına" butonu 1 tokenlik istek atar.
+
+### 3.1 Model seçimi (Revizyon 2)
+
+Ayarlar'da hazır liste (`src/shared/models.ts`), fiyatlar 1M token başına (istem ≤100K):
+
+| Model | Girdi / Çıktı | Kullanım |
+|---|---|---|
+| `claude-haiku-5-5` | $0,10 / $0,50 | varsayılan: dosyaları anlamak |
+| `claude-sonnet-5-5` | $2 / $10 | varsayılan: klasör yapısını kurmak |
+| `claude-opus-5-5` | $4 / $20 | en akıllı |
+
+"Diğer…" ile elle model yazılabilir (tahmin en pahalı ön ayarın fiyatıyla yapılır); "Listeyi yenile" Models API'den erişilebilen modelleri getirir. Efor her istekte açıkça gönderilir (varsayılanlar modele göre farklı). Sonnet/Opus isteklerinde sunucu tarafı yedek model açıktır (`server-side-fallback-2026-07-01`, `fallbacks: "default"`); Haiku'da yoktur — reddedilen (`refusal`) ya da yarıda kesilen parti kurallarla planlanır.
 
 ## 4. LM Studio (yerel)
 

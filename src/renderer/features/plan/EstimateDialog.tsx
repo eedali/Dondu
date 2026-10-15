@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { presetFor } from '@shared/models'
 import type { AIEstimate } from '@shared/types'
 import { api } from '../../app/api'
 import { useApp } from '../../app/store'
@@ -68,6 +69,11 @@ export function EstimateDialog({
               usd: est.provider === 'lmstudio' ? t('estimate.free') : usd(est.usd),
             })}
           </p>
+          {est.model && est.provider === 'anthropic' && (
+            <p className="text-[13px] text-muted">
+              {t('estimate.model', { model: presetFor(est.model)?.name ?? est.model })}
+            </p>
+          )}
           {est.cachedFiles > 0 && (
             <p className="text-[13px] text-muted">
               {t('estimate.cached', { count: est.cachedFiles })}

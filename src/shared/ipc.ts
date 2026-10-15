@@ -108,6 +108,7 @@ export interface IpcInvokeMap {
   'ai:estimate': { args: [sessionId: string]; result: AIEstimate }
   'ai:test': { args: []; result: AiTestResult }
   'ai:models': { args: []; result: string[] }
+  'ai:anthropicModels': { args: []; result: { id: string; name: string; vision: boolean }[] }
   'plan:build': { args: [opts: { sessionId: string; useAI: boolean }]; result: Plan }
   'plan:cancel': { args: [mode: 'partial' | 'abort']; result: void }
   'plan:get': { args: [planId?: string]; result: Plan | null }

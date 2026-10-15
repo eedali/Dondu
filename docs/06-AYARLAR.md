@@ -75,7 +75,8 @@ Zod şeması `src/main/settings/schema.ts` bu dokümandan üretilir; varsayılan
 | Anahtar | Tip | Varsayılan | Açıklama |
 |---|---|---|---|
 | `ai.provider` | `'anthropic'\|'lmstudio'\|'none'` | `none` (onboarding'de seçtirilir) | |
-| `ai.anthropic.model` | string | `claude-haiku-5-5` | |
+| `ai.anthropic.model` | string | `claude-haiku-5-5` | Dosyaları anlamak için (hazır liste: Haiku 5.5 / Sonnet 5.5 / Opus 5.5 / Diğer) |
+| `ai.anthropic.organizerModel` | string | `claude-sonnet-5-5` | Klasör yapısını kurmak için |
 | `ai.anthropic.apiKey` | gizli | — | `safeStorage` |
 | `ai.anthropic.useBatchApi` | bool | `false` | %50 indirim, asenkron |
 | `ai.anthropic.effort` | `'low'\|'medium'` | `low` | |

@@ -101,8 +101,9 @@ export const useApp = create<AppState>((set, get) => ({
     api.on('apply:progress', (p) => set({ applyProgress: p }))
     api.on('app:error', (e) => set({ error: e.message }))
     const params = new URLSearchParams(location.search)
-    const route = params.get('route') as Route | null
-    if (route) set({ route })
+    // route may carry a sub-page: "settings:ai", "help:win-cfa"
+    const [route, sub] = (params.get('route') ?? '').split(':') as [Route | '', string?]
+    if (route) set({ route, helpTopic: sub })
     if (settings.roots.length) void get().refreshChecks(settings.roots)
     autoplan = !!params.get('autoplan')
     autoapply = !!params.get('autoapply')

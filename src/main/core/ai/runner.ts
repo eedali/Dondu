@@ -13,6 +13,8 @@ import { estimateRun, usageCost } from './cost'
 import { buildInput, gateForProvider } from './input'
 import { PROMPT_VERSION, taxonomyHash } from './prompt'
 import { ProviderError, RetryableError, type AIProvider, type Usage } from './types'
+import { abortableSleep } from './util'
+import { pricesFor } from '@shared/models'
 
 /** Which files go to the AI (docs/02 §6.3 step 2 + docs/06 ai.mode). */
 export function selectForAi(
@@ -145,6 +147,7 @@ export async function estimateAi(
   const overTokens = tokens.tokensIn + tokens.tokensOut > settings.ai.maxTokensPerRun
   return {
     provider: provider.id,
+    model: provider.model,
     files: todo.length,
     cachedFiles: prepared.length - todo.length,
     withImages: todo.filter((p) => p.input.imageJpegBase64).length,
@@ -197,7 +200,9 @@ export async function runAi(
   let failedBatches = 0
   let done = 0
   const spent = (): number =>
-    provider.id === 'anthropic' ? usageCost(usage, settings.ai.anthropic.useBatchApi) : 0
+    provider.id === 'anthropic'
+      ? usageCost(usage, settings.ai.anthropic.useBatchApi, pricesFor(provider.model))
+      : 0
   onProgress(0, batches.length, 0)
 
   const accept = (batch: Prepared[], res: { results: AIClassifyOutput[]; usage: Usage }): void => {
@@ -278,22 +283,11 @@ export async function runAi(
       files: todo.length,
       tokensIn: usage.tokensIn + usage.cacheWrite + usage.cacheRead,
       tokensOut: usage.tokensOut,
-      usd: provider.id === 'anthropic' ? usageCost(usage, settings.ai.anthropic.useBatchApi) : 0,
+      usd:
+        provider.id === 'anthropic'
+          ? usageCost(usage, settings.ai.anthropic.useBatchApi, pricesFor(provider.model))
+          : 0,
       failedBatches,
     },
   }
-}
-
-/** setTimeout that ends early when the run is stopped (retry back-off must not block a cancel). */
-export function abortableSleep(ms: number, signal: AbortSignal): Promise<void> {
-  return new Promise((resolve) => {
-    if (signal.aborted) return resolve()
-    const t = setTimeout(done, ms)
-    function done(): void {
-      clearTimeout(t)
-      signal.removeEventListener('abort', done)
-      resolve()
-    }
-    signal.addEventListener('abort', done, { once: true })
-  })
 }

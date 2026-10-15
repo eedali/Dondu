@@ -152,7 +152,8 @@
     "overHint": "Lower the image resolution or send only uncertain files.",
     "privacy": "Sensitive files are never sent to the cloud.",
     "rulesOnly": "Rules only",
-    "run": "Build with {{provider}}"
+    "run": "Build with {{provider}}",
+    "model": "Model: {{model}}"
   },
   "ai": {
     "provider": {
@@ -569,8 +570,8 @@
         },
         "anthropic": {
           "model": {
-            "label": "Model",
-            "desc": "Default: claude-haiku-5-5"
+            "label": "Model for understanding files",
+            "desc": "Looks at every file; a fast, cheap model is recommended because there are many."
           },
           "effort": {
             "label": "Effort",
@@ -579,6 +580,10 @@
           "useBatchApi": {
             "label": "Economy mode (batch)",
             "desc": "50% cheaper, may take a few minutes."
+          },
+          "organizerModel": {
+            "label": "Model for designing folders",
+            "desc": "Designs the whole folder tree in a few requests; a smarter model builds more consistent folders."
           }
         },
         "lmstudio": {
@@ -717,7 +722,15 @@
           "debug": "Detailed"
         }
       }
-    }
+    },
+    "modelNote": {
+      "fast": "fast, cheapest",
+      "smart": "smarter",
+      "smartest": "smartest, most expensive"
+    },
+    "modelOther": "Other… (type a model name)",
+    "modelOtherHint": "Models not in the list are estimated at the most expensive model's price.",
+    "refreshModels": "Refresh list from the API"
   },
   "categories": {
     "intro": "Döndü sorts files into these categories. The AI also chooses only from this list.",

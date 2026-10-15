@@ -11,7 +11,12 @@ import {
   startApply,
   undo,
 } from '../services/apply'
-import { estimateForSession, listLmStudioModels, testProvider } from '../services/ai'
+import {
+  estimateForSession,
+  listAnthropicModels,
+  listLmStudioModels,
+  testProvider,
+} from '../services/ai'
 import { buildPlanForSession, cancelPlanBuild, exportPlan } from '../services/plan'
 import { listQuarantine, trashQuarantine } from '../services/quarantine'
 import type { Plan } from '@shared/types'
@@ -66,6 +71,7 @@ export function registerPlanIpc(): void {
   handle('ai:estimate', (sessionId) => estimateForSession(sessionId))
   handle('ai:test', () => testProvider())
   handle('ai:models', () => listLmStudioModels())
+  handle('ai:anthropicModels', () => listAnthropicModels())
 
   handle('apply:start', (planId, opts) => startApply(planId, opts))
   handle('apply:pause', () => pauseApply())

@@ -283,15 +283,13 @@ describe('AnthropicProvider (mocked HTTP)', () => {
     type: 'message',
     role: 'assistant',
     model: 'claude-haiku-5-5',
-    stop_reason: 'tool_use',
+    stop_reason: 'end_turn',
     stop_sequence: null,
     content: [
       { type: 'thinking', thinking: '', signature: 'sig' },
       {
-        type: 'tool_use',
-        id: 'tu_1',
-        name: 'classify_files',
-        input: {
+        type: 'text',
+        text: JSON.stringify({
           results: [
             {
               id: 'f_0001',
@@ -301,7 +299,7 @@ describe('AnthropicProvider (mocked HTTP)', () => {
               reason: 'Fatura.',
             },
           ],
-        },
+        }),
       },
     ],
     usage: {
@@ -312,10 +310,10 @@ describe('AnthropicProvider (mocked HTTP)', () => {
     },
   }
 
-  const make = (f: typeof fetch): AnthropicProvider =>
+  const make = (f: typeof fetch, model = 'claude-haiku-5-5'): AnthropicProvider =>
     new AnthropicProvider({
       apiKey: 'sk-test',
-      model: 'claude-haiku-5-5',
+      model,
       effort: 'low',
       useBatchApi: false,
       categories: DEFAULT_CATEGORIES,
@@ -325,7 +323,7 @@ describe('AnthropicProvider (mocked HTTP)', () => {
       maxRetries: 0,
     })
 
-  it('sends a Haiku 5.5-compatible request and reads the tool call', async () => {
+  it('sends a Haiku 5.5-compatible structured-output request', async () => {
     const m = mockFetch(() => ({ status: 200, json: ok }))
     const p = make(m.fetch)
     const res = await p.classify(
@@ -338,14 +336,50 @@ describe('AnthropicProvider (mocked HTTP)', () => {
     expect(body).not.toHaveProperty('temperature')
     expect(body).not.toHaveProperty('top_p')
     expect(body).not.toHaveProperty('top_k')
-    expect(body['output_config']).toEqual({ effort: 'low' })
-    expect(body['tool_choice']).toEqual({ type: 'tool', name: 'classify_files' })
+    const oc = body['output_config'] as {
+      effort: string
+      format: { type: string; schema: unknown }
+    }
+    expect(oc.effort).toBe('low')
+    expect(oc.format.type).toBe('json_schema')
+    // Unsupported schema keywords are stripped; objects are closed.
+    expect(JSON.stringify(oc.format.schema)).not.toMatch(/maxLength|minimum|maximum|pattern/)
+    expect((oc.format.schema as { additionalProperties: boolean }).additionalProperties).toBe(false)
+    // Forced tool use is rejected by Sonnet/Opus 5.5, so it is never sent.
+    expect(body).not.toHaveProperty('tool_choice')
+    expect(body).not.toHaveProperty('tools')
     const system = body['system'] as { cache_control?: unknown }[]
     expect(system[0]!.cache_control).toEqual({ type: 'ephemeral' })
     const content = (body['messages'] as { content: { type: string }[] }[])[0]!.content
     expect(content.some((c) => c.type === 'image')).toBe(true)
     expect(res.results[0]!.category).toBe('docs_invoice')
     expect(res.usage).toEqual({ tokensIn: 800, tokensOut: 90, cacheWrite: 1200, cacheRead: 0 })
+  })
+
+  it('Sonnet 5.5 goes through the beta endpoint with the server-side refusal fallback', async () => {
+    const m = mockFetch(() => ({ status: 200, json: { ...ok, model: 'claude-sonnet-5-5' } }))
+    const p = make(m.fetch, 'claude-sonnet-5-5')
+    const res = await p.classify([input('f_0001')], new AbortController().signal)
+    const body = m.calls[0]!.body as Record<string, unknown>
+    expect(body['model']).toBe('claude-sonnet-5-5')
+    expect(body['fallbacks']).toBe('default')
+    expect(body).not.toHaveProperty('tool_choice')
+    expect(res.results).toHaveLength(1)
+  })
+
+  it('a refusal or cut-off answer fails the batch (its files keep the rule result)', async () => {
+    const refusal = make(
+      mockFetch(() => ({ status: 200, json: { ...ok, stop_reason: 'refusal' } })).fetch,
+    )
+    const e1 = await refusal
+      .classify([input('f_0001')], new AbortController().signal)
+      .catch((e) => e)
+    expect((e1 as ProviderError).code).toBe('refusal')
+    const cut = make(
+      mockFetch(() => ({ status: 200, json: { ...ok, stop_reason: 'max_tokens' } })).fetch,
+    )
+    const e2 = await cut.classify([input('f_0001')], new AbortController().signal).catch((e) => e)
+    expect((e2 as ProviderError).code).toBe('bad_response')
   })
 
   it('maps 429/529 to retryable and 401 to an auth error', async () => {

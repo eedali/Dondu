@@ -123,3 +123,22 @@ export async function listLmStudioModels(): Promise<string[]> {
   })
   return p.listModels()
 }
+
+export async function listAnthropicModels(): Promise<
+  { id: string; name: string; vision: boolean }[]
+> {
+  const ctx = context()
+  const apiKey = ctx.secrets.get('anthropicApiKey')
+  if (!apiKey) throw new Error('Önce API anahtarını kaydedin.')
+  const s = ctx.settings.get()
+  const p = new AnthropicProvider({
+    apiKey,
+    model: s.ai.anthropic.model,
+    effort: 'low',
+    useBatchApi: false,
+    categories: [],
+    corrections: [],
+    imageEdge: s.images.thumbnailMaxEdge,
+  })
+  return p.listModels()
+}

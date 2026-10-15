@@ -152,7 +152,8 @@
     "overHint": "Görsel çözünürlüğünü düşürün ya da yalnızca belirsiz dosyaları gönderin.",
     "privacy": "Hassas dosyalar hiçbir zaman buluta gönderilmez.",
     "rulesOnly": "Yalnızca kurallarla",
-    "run": "{{provider}} ile oluştur"
+    "run": "{{provider}} ile oluştur",
+    "model": "Model: {{model}}"
   },
   "ai": {
     "provider": {
@@ -569,8 +570,8 @@
         },
         "anthropic": {
           "model": {
-            "label": "Model",
-            "desc": "Varsayılan: claude-haiku-5-5"
+            "label": "Dosyaları anlamak için model",
+            "desc": "Her dosyaya bakar; çok dosya olduğu için hızlı ve ucuz olanı önerilir."
           },
           "effort": {
             "label": "Çaba",
@@ -579,6 +580,10 @@
           "useBatchApi": {
             "label": "Ekonomik mod (toplu istek)",
             "desc": "%50 daha ucuz, birkaç dakika sürebilir."
+          },
+          "organizerModel": {
+            "label": "Klasör yapısını kurmak için model",
+            "desc": "Birkaç istekte tüm klasör ağacını tasarlar; daha akıllı model daha tutarlı klasörler kurar."
           }
         },
         "lmstudio": {
@@ -717,7 +722,15 @@
           "debug": "Ayrıntılı"
         }
       }
-    }
+    },
+    "modelNote": {
+      "fast": "hızlı, en ucuz",
+      "smart": "daha akıllı",
+      "smartest": "en akıllı, en pahalı"
+    },
+    "modelOther": "Diğer… (model adını yazın)",
+    "modelOtherHint": "Listede olmayan modeller için tahmin en pahalı modelin fiyatıyla yapılır.",
+    "refreshModels": "Listeyi API'den yenile"
   },
   "categories": {
     "intro": "Döndü dosyaları bu kategorilere ayırır. Yapay zekâ da yalnızca bu listeden seçer.",

@@ -199,6 +199,7 @@ export interface AIClassifyOutput {
 
 export interface AIEstimate {
   provider: 'anthropic' | 'lmstudio' | 'none'
+  model?: string
   files: number
   cachedFiles: number
   withImages: number

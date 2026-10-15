@@ -7,6 +7,7 @@ import { api } from '../../app/api'
 import { useApp } from '../../app/store'
 import { Button, Card, Dialog, Field, Input, Notice, Select, Toggle, cx } from '../../components/ui'
 import { CategoryEditor } from './CategoryEditor'
+import { ModelPicker } from './ModelPicker'
 import {
   AI_FIELDS,
   ANTHROPIC_FIELDS,
@@ -23,7 +24,10 @@ export function SettingsScreen(): React.JSX.Element {
   const { t } = useTranslation()
   const settings = useApp((s) => s.settings)
   const update = useApp((s) => s.updateSettings)
-  const [section, setSection] = useState<SectionId>('general')
+  const initial = useApp((s) => s.helpTopic) as SectionId | undefined
+  const [section, setSection] = useState<SectionId>(
+    initial && SECTIONS.some((s) => s.id === initial) ? initial : 'general',
+  )
   const [resetOpen, setResetOpen] = useState(false)
   if (!settings) return <Layout title={t('nav.settings')}>{null}</Layout>
   const advanced = settings.advancedSettings
@@ -383,6 +387,18 @@ function AiSection({
           {secrets && !secrets.encryptionAvailable && (
             <Notice tone="warn">{t('settings.noEncryption')}</Notice>
           )}
+          <ModelPicker
+            label={t('settings.f.ai.anthropic.model.label')}
+            description={t('settings.f.ai.anthropic.model.desc')}
+            value={settings.ai.anthropic.model}
+            onChange={(m) => void update({ ai: { anthropic: { model: m } } })}
+          />
+          <ModelPicker
+            label={t('settings.f.ai.anthropic.organizerModel.label')}
+            description={t('settings.f.ai.anthropic.organizerModel.desc')}
+            value={settings.ai.anthropic.organizerModel}
+            onChange={(m) => void update({ ai: { anthropic: { organizerModel: m } } })}
+          />
           <FieldList fields={ANTHROPIC_FIELDS} settings={settings} update={update} />
         </div>
       )}

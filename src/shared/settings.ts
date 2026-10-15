@@ -125,7 +125,10 @@ export const settingsSchema = z.object({
       provider: z.enum(['anthropic', 'lmstudio', 'none']).default('none'),
       anthropic: z
         .object({
+          /** Model that looks at each file (cheap, vision). */
           model: z.string().default('claude-haiku-5-5'),
+          /** Model that designs the folder tree (few calls; smarter pays off). */
+          organizerModel: z.string().default('claude-sonnet-5-5'),
           useBatchApi: z.boolean().default(false),
           effort: z.enum(['low', 'medium']).default('low'),
         })

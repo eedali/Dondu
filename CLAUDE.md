@@ -18,7 +18,7 @@ Primary user: a non-technical person (the developer's spouse) on a MacBook. Seco
 6. **Sensitive stays local.** Files flagged sensitive (see `docs/03-YAPAY-ZEKA.md` §Hassas) are never sent to a cloud AI — only to LM Studio or rules. Thumbnails/excerpts of flagged files are not persisted outside the app data dir.
 7. **No secrets in the repo or logs.** API keys live in Electron `safeStorage`. `.env*` is gitignored. Never log file contents, excerpts or keys. Paths in logs are fine.
 8. **Cost guard.** Every AI run shows an estimate first and respects the per-run token/dollar cap setting. Cache AI results by content hash + prompt version.
-9. **Anthropic API specifics:** model id `claude-haiku-5-5`; **omit `temperature`, `top_p`, `top_k`** (they return 400 on this model); use `effort: "low"` for classification; use tool-use with a JSON schema for structured output; mark the system prompt with `cache_control`.
+9. **Anthropic API specifics:** default model `claude-haiku-5-5` for understanding files and `claude-sonnet-5-5` for designing the folder tree; both are user-selectable (presets in `src/shared/models.ts`). **Omit `temperature`, `top_p`, `top_k`** (400 on current models); always set `output_config.effort` explicitly (defaults differ per model); get JSON via **structured outputs** (`output_config.format` json_schema) — never forced `tool_choice`, which Sonnet 5.5 / Opus 5.5 reject; mark the system prompt with `cache_control`; Sonnet/Opus use the server-side refusal fallback (`fallbacks: "default"`).
 10. **Cross-platform file names.** Sanitize for both OSes (see `docs/04-PLATFORM.md`), normalize to NFC, cap at 200 chars, handle case-insensitive renames in two steps.
 
 ## Tech stack (decided — do not change without asking)
@@ -28,7 +28,7 @@ Primary user: a non-technical person (the developer's spouse) on a MacBook. Seco
 - Hashing: `hash-wasm` (xxh3 for fast hash, blake3 for full hash) — no native deps.
 - Thumbnails: Electron `nativeImage.createThumbnailFromPath()` (main process; uses QuickLook on macOS, shell thumbnails on Windows → handles HEIC, PDF, Pages, videos). Fallback `nativeImage.createFromPath().resize()`. **No `sharp`.**
 - Text extraction: `pdf-parse` (or `pdfjs-dist`), `mammoth` (docx), `xlsx` (SheetJS, read-only), `music-metadata`, `exifr`, `file-type`.
-- AI: `@anthropic-ai/sdk`; LM Studio via its OpenAI-compatible endpoint using plain `fetch` (no openai sdk needed).
+- AI: `@anthropic-ai/sdk` (Haiku 5.5 / Sonnet 5.5 / Opus 5.5 selectable); LM Studio via its OpenAI-compatible endpoint using plain `fetch` (no openai sdk needed).
 - Settings: JSON file in `app.getPath('userData')` with a Zod schema; secrets via `safeStorage`.
 - Packaging: `electron-builder` (dmg + nsis), builds run on GitHub Actions (`.github/workflows/build.yml`). macOS is built unsigned/ad-hoc (`CSC_IDENTITY_AUTO_DISCOVERY=false`, `mac.identity: null`).
 - Tests: `vitest`. Fixture generator at `scripts/make-fixtures.ts` creates a messy temp folder; **all FS tests run only inside temp dirs**.
