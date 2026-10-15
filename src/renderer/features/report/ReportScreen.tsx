@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { categoryName } from '@shared/categories'
 import { formatBytes } from '@shared/format'
 import type { Plan, PlanItem } from '@shared/types'
 import { Layout } from '../../app/Layout'
@@ -10,9 +9,12 @@ import { Button, EmptyState, Input, Notice, Select, Tabs, cx } from '../../compo
 import { ApproveDialog } from './ApproveDialog'
 import { DetailPanel } from './DetailPanel'
 import { FolderDialog } from './FolderDialog'
-import { ItemRow } from './ItemRow'
+import { ItemRow, kindOrCategory } from './ItemRow'
+import { EventCard } from './EventCard'
+import { FolderTree } from './FolderTree'
+import { RenameFolderDialog } from './RenameFolderDialog'
 import { duplicateForEditing, exportReport, patchItems } from './actions'
-import { groupItems, groupLabel, tabItems, type ReportTab } from './model'
+import { groupItems, groupLabel, inFolder, tabItems, type ReportTab, type TreeNode } from './model'
 
 const PAGE = 150
 
@@ -25,6 +27,7 @@ export function ReportScreen(): React.JSX.Element {
   const [cat, setCat] = useState('')
   const [conf, setConf] = useState('')
   const [selected, setSelected] = useState<string | null>(null)
+  const [folder, setFolder] = useState<TreeNode | null>(null)
   const [approveOpen, setApproveOpen] = useState(false)
   const [exportMsg, setExportMsg] = useState<string | null>(null)
 
@@ -141,7 +144,7 @@ export function ReportScreen(): React.JSX.Element {
             { value: '', label: t('report.allCategories') },
             ...[...new Set(plan.items.map((i) => i.category))].map((c) => ({
               value: c,
-              label: categoryName(useApp.getState().categories, c, i18n.language),
+              label: kindOrCategory(useApp.getState().categories, c, i18n.language, t),
             })),
           ]}
         />
@@ -159,6 +162,9 @@ export function ReportScreen(): React.JSX.Element {
       </div>
 
       <div className="mt-4 flex gap-4">
+        {(tab === 'plan' || tab === 'review') && (
+          <FolderTree items={tabItems(plan, tab)} selected={folder} onSelect={setFolder} />
+        )}
         <div className="min-w-0 flex-1">
           <GroupList
             plan={plan}
@@ -166,6 +172,7 @@ export function ReportScreen(): React.JSX.Element {
             query={query}
             cat={cat}
             conf={conf}
+            folder={tab === 'plan' || tab === 'review' ? folder : null}
             editable={editable}
             selected={selected}
             onSelect={setSelected}
@@ -246,21 +253,35 @@ function GroupList(props: {
   query: string
   cat: string
   conf: string
+  folder: TreeNode | null
   editable: boolean
   selected: string | null
   onSelect: (id: string) => void
 }): React.JSX.Element {
   const { t } = useTranslation()
-  const { plan, tab, query, cat, conf } = props
+  const { plan, tab, query, cat, conf, folder } = props
   const groups = useMemo(
-    () => groupItems(tabItems(plan, tab).filter((it) => matches(it, query, cat, conf))),
-    [plan, tab, query, cat, conf],
+    () =>
+      groupItems(
+        tabItems(plan, tab).filter(
+          (it) => matches(it, query, cat, conf) && (!folder || inFolder(it, folder)),
+        ),
+      ),
+    [plan, tab, query, cat, conf, folder],
   )
   if (!groups.length) return <EmptyState title={t('report.noItems')} />
   return (
     <div className="flex flex-col gap-3">
       {groups.map((g) => (
-        <GroupSection key={g.key} groupKey={g.key} items={g.items} {...props} />
+        <GroupSection
+          key={g.key}
+          groupKey={g.key}
+          items={g.items}
+          plan={plan}
+          editable={props.editable}
+          selected={props.selected}
+          onSelect={props.onSelect}
+        />
       ))}
     </div>
   )
@@ -285,7 +306,9 @@ function GroupSection({
   const [open, setOpen] = useState(true)
   const [limit, setLimit] = useState(PAGE)
   const [folderOpen, setFolderOpen] = useState(false)
+  const [renameOpen, setRenameOpen] = useState(false)
   const label = groupLabel(groupKey)
+  const [groupRoot = '', groupRel = ''] = groupKey.split('|')
   const allOn = items.every((i) => i.enabled)
   const canMove = editable && !label.special
   return (
@@ -317,6 +340,11 @@ function GroupSection({
         </button>
         {editable && (
           <div className="flex shrink-0 gap-1">
+            {canMove && groupRel && (
+              <Button size="sm" variant="ghost" onClick={() => setRenameOpen(true)}>
+                {t('report.renameFolder')}
+              </Button>
+            )}
             {canMove && (
               <Button size="sm" variant="ghost" onClick={() => setFolderOpen(true)}>
                 {t('report.changeTarget')}
@@ -339,16 +367,27 @@ function GroupSection({
       </header>
       {open && (
         <ul>
-          {items.slice(0, limit).map((it) => (
-            <ItemRow
-              key={it.id}
-              plan={plan}
-              item={it}
-              editable={editable}
-              selected={selected === it.id}
-              onSelect={() => onSelect(it.id)}
-            />
-          ))}
+          {displayRows(items.slice(0, limit)).map((row) =>
+            row.kind === 'event' ? (
+              <EventCard
+                key={row.items[0]!.unitId ?? row.items[0]!.id}
+                plan={plan}
+                items={row.items}
+                editable={editable}
+                selected={selected}
+                onSelect={onSelect}
+              />
+            ) : (
+              <ItemRow
+                key={row.item.id}
+                plan={plan}
+                item={row.item}
+                editable={editable}
+                selected={selected === row.item.id}
+                onSelect={() => onSelect(row.item.id)}
+              />
+            ),
+          )}
           {items.length > limit && (
             <li className="px-4 py-2">
               <Button size="sm" variant="ghost" onClick={() => setLimit(limit + PAGE)}>
@@ -357,6 +396,14 @@ function GroupSection({
             </li>
           )}
         </ul>
+      )}
+      {renameOpen && (
+        <RenameFolderDialog
+          plan={plan}
+          root={groupRoot}
+          rel={groupRel}
+          onClose={() => setRenameOpen(false)}
+        />
       )}
       {folderOpen && (
         <FolderDialog
@@ -368,4 +415,24 @@ function GroupSection({
       )}
     </section>
   )
+}
+
+type Row = { kind: 'item'; item: PlanItem } | { kind: 'event'; items: PlanItem[] }
+
+/** Items of one event (same unit) collapse into a single card. */
+function displayRows(items: PlanItem[]): Row[] {
+  const rows: Row[] = []
+  const events = new Map<string, PlanItem[]>()
+  for (const it of items) {
+    if (it.flags.includes('event') && it.unitId) {
+      const list = events.get(it.unitId)
+      if (list) list.push(it)
+      else {
+        const fresh = [it]
+        events.set(it.unitId, fresh)
+        rows.push({ kind: 'event', items: fresh })
+      }
+    } else rows.push({ kind: 'item', item: it })
+  }
+  return rows
 }

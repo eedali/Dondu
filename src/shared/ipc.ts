@@ -117,6 +117,10 @@ export interface IpcInvokeMap {
     args: [planId: string, itemIds: string[], patch: PlanItemPatch]
     result: Plan
   }
+  'plan:renameFolder': {
+    args: [planId: string, root: string, fromRel: string, toRel: string]
+    result: Plan
+  }
   'plan:approve': { args: [planId: string]; result: Plan }
   'plan:duplicate': { args: [planId: string]; result: Plan }
   'plan:export': {

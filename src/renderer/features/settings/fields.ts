@@ -7,6 +7,7 @@ export type FieldDef =
   | { key: string; type: 'list' }
 
 export type SectionId =
+  | 'organize'
   | 'general'
   | 'scan'
   | 'images'
@@ -18,9 +19,19 @@ export type SectionId =
   | 'data'
   | 'categories'
 
-export const SIMPLE_SECTIONS: SectionId[] = ['general', 'scan', 'images', 'ai']
+export const SIMPLE_SECTIONS: SectionId[] = ['organize', 'general', 'scan', 'images', 'ai']
 
 export const SECTIONS: { id: SectionId; fields: FieldDef[] }[] = [
+  {
+    id: 'organize',
+    fields: [
+      { key: 'organize.style', type: 'select', options: ['topic', 'type'] },
+      { key: 'organize.existingFolders', type: 'select', options: ['moveWhole', 'keep'] },
+      { key: 'organize.hint', type: 'text' },
+      { key: 'organize.maxDepth', type: 'number', min: 1, max: 5 },
+      { key: 'organize.cloudImages', type: 'bool' },
+    ],
+  },
   {
     id: 'general',
     fields: [

@@ -201,3 +201,31 @@ describe('topic organisation (revision 1)', () => {
     expect(JSON.stringify(und.messages)).toContain('"type":"image"')
   })
 })
+
+describe('report edits remember folder choices (revision 1)', () => {
+  it('renaming a proposed folder moves everything under it and is remembered per topic', async () => {
+    const fx = await scanFixture()
+    const res = await runTopic(fx, weddingAwareProvider())
+    const plan = planFromSession(
+      fx.repos,
+      fx.sessionId,
+      fx.settings,
+      undefined,
+      res.summary,
+      res.organization,
+    )
+    const { renameTargetFolder } = await import('../../src/main/core/planner/session')
+    const renamed = renameTargetFolder(fx.repos, plan.id, fx.info.dir, 'Aile', 'Ailem/Özel Günler')
+    const w = renamed.items.find(
+      (i) => rel(i.sourcePath, fx.info.dir) === fx.info.topics.wedding[0],
+    )!
+    expect(rel(w.targetPath, fx.info.dir)).toBe(
+      `Ailem/Özel Günler/Düğün (Haziran 2023)/${path.basename(fx.info.topics.wedding[0]!)}`,
+    )
+    expect(w.userEdited).toBe(true)
+    const prefs = fx.repos.folderPrefs.recent(fx.info.dir)
+    expect(prefs.find((p) => p.topic === 'düğün')?.folder).toBe(
+      'Ailem/Özel Günler/Düğün (Haziran 2023)',
+    )
+  })
+})

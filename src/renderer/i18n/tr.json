@@ -141,7 +141,7 @@
     "title": "Yapay zekâ tahmini",
     "calculating": "Hesaplanıyor…",
     "nothing": "Kurallar her şeyi sınıflandırdı; yapay zekâya gerek yok.",
-    "line": "{{files}} dosya yapay zekâya gönderilecek · ~{{tokens}} token · ~{{usd}}",
+    "line": "{{files}} öğe (dosya, klasör ya da etkinlik) yapay zekâya gösterilecek · ~{{tokens}} token · ~{{usd}}",
     "free": "ücretsiz (yerel)",
     "cached_one": "{{count}} dosyanın sonucu önbellekte; tekrar ücret yok.",
     "cached_other": "{{count}} dosyanın sonucu önbellekte; tekrar ücret yok.",
@@ -216,7 +216,8 @@
       "near": "Çok benzer görseller",
       "inplace": "Zaten yerinde",
       "cloud": "Bulutta, indirilmemiş — dokunulmadı",
-      "skip": "Dokunulmayanlar"
+      "skip": "Dokunulmayanlar",
+      "folders": "Derli toplu klasörler — olduğu yerde"
     },
     "include": "{{name}} dahil et",
     "details": "{{name}} ayrıntıları",
@@ -255,7 +256,20 @@
       "body_other": "{{count}} dosya bu klasöre gidecek.",
       "root": "Kök klasör",
       "label": "{{root}} içindeki klasör"
-    }
+    },
+    "tree": "Önerilen klasörler",
+    "allFolders": "Tümü",
+    "renameFolder": "Yeniden adlandır",
+    "renameTitle": "Klasörü yeniden adlandır",
+    "renameBody": "Bu klasöre (ve alt klasörlerine) gidecek her şey yeni yola gider. Var olan bir klasörün yolunu yazarsanız ikisi birleşir.",
+    "renameHint": "Alt klasör için / kullanın, ör. Aile/Düğün (Haziran 2023). Seçiminiz sonraki taramalarda hatırlanır.",
+    "folderShort": "KLASÖR",
+    "folderUnit": "Klasör, bütün olarak",
+    "event": "Etkinlik",
+    "eventCount_one": "{{count}} fotoğraf/video",
+    "eventCount_other": "{{count}} fotoğraf/video",
+    "showFiles": "Dosyaları göster",
+    "hideFiles": "Gizle"
   },
   "approve": {
     "title": "Uygulansın mı?",
@@ -373,14 +387,15 @@
       "ai": "Yapay zekâ",
       "apply": "Rapor / Uygulama",
       "data": "Veri",
-      "categories": "Kategoriler"
+      "categories": "Kategoriler",
+      "organize": "Düzenleme"
     },
     "advanced": "Gelişmiş",
     "reset": "Varsayılanlara dön",
     "resetTitle": "Ayarlar sıfırlansın mı?",
     "resetBody": "Tüm ayarlar varsayılana döner. Seçili klasörler, dil ve API anahtarı korunur.",
     "locked": "(güvenlik için değiştirilemez)",
-    "aiIntro": "Kurallar dosyaların çoğunu kendi başına düzenler. Yapay zekâ yalnızca emin olunamayan dosyalara yardım eder.",
+    "aiIntro": "Konuya göre düzenlemede yapay zekâ her dosyaya, klasöre ve etkinliğe bakar, sonra klasör yapısını kurar. Türe göre düzenlemede yalnızca kuralların emin olamadığı dosyalara yardım eder.",
     "providerDesc": {
       "none": "Ücretsiz, çevrimdışı.",
       "anthropic": "Hızlı, çok iyi; ~1 sent / 50 dosya.",
@@ -666,6 +681,27 @@
           "label": "Günlük ayrıntısı",
           "desc": "İçerik ve anahtarlar hiçbir zaman yazılmaz."
         }
+      },
+      "organize": {
+        "style": {
+          "label": "Düzenleme biçimi",
+          "desc": "Konuya göre: yapay zekâ dosyaları anlar, konu klasörleri kurar (ör. Düğün, Oyun Geliştirme). Türe göre: klasik klasörler (Fotoğraflar, Belgeler…)."
+        },
+        "existingFolders": {
+          "label": "Derli toplu klasörlerim",
+          "desc": "Ses paketi, kurs, albüm gibi klasörler hiçbir zaman bölünmez."
+        },
+        "hint": {
+          "label": "Bu bilgisayarı ne için kullanıyorsunuz? (isteğe bağlı)",
+          "desc": "Klasör yapısını kuran yapay zekâya ipucu, ör. \"oyun geliştiriyorum, üniversitedeyim\"."
+        },
+        "maxDepth": {
+          "label": "En fazla klasör derinliği"
+        },
+        "cloudImages": {
+          "label": "Görsel önizlemelerini buluta gönder",
+          "desc": "Kapalıysa fotoğrafların içeriğini yalnızca yerel model (LM Studio) görür; Claude yalnızca ad ve tarih bilgisini alır."
+        }
       }
     },
     "o": {
@@ -720,6 +756,16 @@
           "error": "Yalnızca hatalar",
           "info": "Normal",
           "debug": "Ayrıntılı"
+        }
+      },
+      "organize": {
+        "style": {
+          "topic": "Konuya göre (yapay zekâ)",
+          "type": "Türe göre (klasik)"
+        },
+        "existingFolders": {
+          "moveWhole": "Bütün olarak uygun yere taşı",
+          "keep": "Olduğu yerde bırak"
         }
       }
     },
@@ -855,5 +901,28 @@
     "abort": "Tamamen vazgeç",
     "keepGoing": "Devam etsin",
     "stop": "Durdur"
+  },
+  "kind": {
+    "photo": "Fotoğraf",
+    "screenshot_phone": "Ekran görüntüsü (telefon)",
+    "screenshot_pc": "Ekran görüntüsü (bilgisayar)",
+    "document_photo": "Belge fotoğrafı",
+    "image": "Görsel",
+    "document": "Belge",
+    "spreadsheet": "Tablo",
+    "presentation": "Sunum",
+    "video": "Video",
+    "screen_recording": "Ekran kaydı",
+    "music": "Müzik",
+    "sound_effect": "Ses efekti",
+    "voice_note": "Sesli not",
+    "game_asset": "Oyun varlığı",
+    "design_asset": "Tasarım dosyası",
+    "font": "Yazı tipi",
+    "code": "Kod / proje",
+    "installer": "Kurulum",
+    "archive": "Arşiv",
+    "ebook": "E-kitap / makale",
+    "other": "Diğer"
   }
 }

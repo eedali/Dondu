@@ -26,7 +26,7 @@ export function SettingsScreen(): React.JSX.Element {
   const update = useApp((s) => s.updateSettings)
   const initial = useApp((s) => s.helpTopic) as SectionId | undefined
   const [section, setSection] = useState<SectionId>(
-    initial && SECTIONS.some((s) => s.id === initial) ? initial : 'general',
+    initial && SECTIONS.some((s) => s.id === initial) ? initial : 'organize',
   )
   const [resetOpen, setResetOpen] = useState(false)
   if (!settings) return <Layout title={t('nav.settings')}>{null}</Layout>

@@ -9,6 +9,7 @@ import { namePattern } from '../rules'
 import { buildPlan, summarizePlan } from '.'
 import { organizeWithRules, type Organization } from '../organize'
 import path from 'node:path'
+import { isContentKind } from '@shared/kinds'
 
 /** Builds and stores a draft plan for a scan session. */
 export function planFromSession(
@@ -69,7 +70,7 @@ export function updatePlanItems(
       (patch.targetDir !== undefined &&
       it.action !== 'quarantine' &&
       it.action !== 'trash' &&
-      it.action !== 'skip'
+      !it.flags.includes('cloud')
         ? path.join(patch.targetDir, path.basename(it.targetPath))
         : undefined)
     if (newTarget !== undefined) {
@@ -87,6 +88,9 @@ export function updatePlanItems(
         .relative(plan.roots.find((r) => isInsideAny(t, [r])) ?? '', path.dirname(it.targetPath))
         .split(path.sep)
         .join('/')}`
+      // Remember the choice: next time this topic goes to the same folder (revision 1).
+      if (learn && it.topic)
+        repos.folderPrefs.add({ root, topic: it.topic, kind: it.category, folder: safeRel })
     }
     if (patch.suggestedName !== undefined) {
       const name = sanitizeFileName(patch.suggestedName)
@@ -95,7 +99,7 @@ export function updatePlanItems(
     }
     if (patch.category !== undefined && patch.category !== it.category) {
       const cat = categories.get(patch.category)
-      if (!cat) throw new Error('unknown_category')
+      if (!cat && !isContentKind(patch.category)) throw new Error('unknown_category')
       const f = files.get(it.fileId)
       if (learn && f) {
         repos.corrections.add({
@@ -172,4 +176,39 @@ export function duplicatePlan(repos: Repos, planId: string): Plan {
   }
   repos.plans.save(copy)
   return copy
+}
+
+/**
+ * Renames (or merges) a target folder of a draft plan: every item going into `fromRel` (or a
+ * sub-folder of it) now goes into `toRel`. Used by the report's folder tree (revision 1).
+ */
+export function renameTargetFolder(
+  repos: Repos,
+  planId: string,
+  root: string,
+  fromRel: string,
+  toRel: string,
+  learn = true,
+): Plan {
+  const plan = repos.plans.get(planId)
+  if (!plan) throw new Error('plan not found')
+  if (plan.status !== 'draft') throw new Error('plan_not_draft')
+  if (!plan.roots.some((r) => pathKey(r) === pathKey(root))) throw new Error('target_outside_roots')
+  const to = sanitizeRelDir(toRel)
+  if (!to) throw new Error('empty_folder_name')
+  const fromAbs = path.join(root, ...fromRel.split('/').filter(Boolean))
+  const toAbs = path.join(root, ...to.split('/'))
+  const fromKey = pathKey(fromAbs)
+  // Group by destination so each distinct folder is one update (large folders stay fast).
+  const byDir = new Map<string, string[]>()
+  const under = (k: string): boolean => k === fromKey || k.startsWith(fromKey + path.sep)
+  for (const it of plan.items) {
+    if (it.action === 'skip' || it.action === 'quarantine' || it.action === 'trash') continue
+    if (!under(pathKey(path.dirname(it.targetPath)))) continue
+    const restDir = path.relative(fromAbs, path.dirname(it.targetPath))
+    const newDir = restDir ? path.join(toAbs, restDir) : toAbs
+    byDir.set(newDir, [...(byDir.get(newDir) ?? []), it.id])
+  }
+  for (const [dir, ids] of byDir) updatePlanItems(repos, planId, ids, { targetDir: dir }, learn)
+  return repos.plans.get(planId) ?? plan
 }

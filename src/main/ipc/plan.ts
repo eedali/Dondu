@@ -1,7 +1,12 @@
 import { context } from '../context'
 import { preflight } from '../core/apply'
 import { platform } from '../core/platform'
-import { approvePlan, duplicatePlan, updatePlanItems } from '../core/planner/session'
+import {
+  approvePlan,
+  duplicatePlan,
+  renameTargetFolder,
+  updatePlanItems,
+} from '../core/planner/session'
 import {
   cancelApply,
   getPendingRecovery,
@@ -58,6 +63,18 @@ export function registerPlanIpc(): void {
       updatePlanItems(c.repos, planId, itemIds, patch, c.settings.get().ai.learnFromCorrections),
     )
   })
+  handle('plan:renameFolder', (planId, root, fromRel, toRel) =>
+    enrich(
+      renameTargetFolder(
+        context().repos,
+        planId,
+        root,
+        fromRel,
+        toRel,
+        context().settings.get().ai.learnFromCorrections,
+      ),
+    ),
+  )
   handle('plan:approve', (planId) => enrich(approvePlan(context().repos, planId)))
   handle('plan:duplicate', (planId) => enrich(duplicatePlan(context().repos, planId)))
   handle('plan:export', (planId, format) => exportPlan(planId, format))

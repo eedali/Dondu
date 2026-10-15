@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { formatBytes } from '@shared/format'
+import { CONTENT_KINDS, isContentKind } from '@shared/kinds'
 import type { FileMeta, FileRecord, Plan, PlanItem } from '@shared/types'
 import { api, thumbUrl } from '../../app/api'
 import { useApp } from '../../app/store'
@@ -139,9 +140,16 @@ export function DetailPanel({
               id="dondu-cat"
               value={item.category}
               onChange={(e) => void patchItems([item.id], { category: e.target.value })}
-              options={categories
-                .filter((c) => c.enabled)
-                .map((c) => ({ value: c.id, label: i18n.language === 'tr' ? c.nameTr : c.nameEn }))}
+              options={
+                isContentKind(item.category)
+                  ? CONTENT_KINDS.map((k) => ({ value: k, label: t(`kind.${k}`) }))
+                  : categories
+                      .filter((c) => c.enabled)
+                      .map((c) => ({
+                        value: c.id,
+                        label: i18n.language === 'tr' ? c.nameTr : c.nameEn,
+                      }))
+              }
             />
             <p className="text-[12px] text-muted">{t('report.learnHint')}</p>
             {movable && (

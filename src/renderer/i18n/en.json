@@ -141,7 +141,7 @@
     "title": "AI estimate",
     "calculating": "Calculating…",
     "nothing": "The rules classified everything; no AI needed.",
-    "line": "{{files}} files will be sent to AI · ~{{tokens}} tokens · ~{{usd}}",
+    "line": "{{files}} items (files, folders or events) will be shown to AI · ~{{tokens}} tokens · ~{{usd}}",
     "free": "free (local)",
     "cached_one": "{{count}} file is cached; no charge again.",
     "cached_other": "{{count}} files are cached; no charge again.",
@@ -216,7 +216,8 @@
       "near": "Very similar images",
       "inplace": "Already in place",
       "cloud": "In the cloud, not downloaded — left alone",
-      "skip": "Left alone"
+      "skip": "Left alone",
+      "folders": "Coherent folders — left in place"
     },
     "include": "Include {{name}}",
     "details": "Details of {{name}}",
@@ -255,7 +256,20 @@
       "body_other": "{{count}} files will go to this folder.",
       "root": "Root folder",
       "label": "Folder inside {{root}}"
-    }
+    },
+    "tree": "Proposed folders",
+    "allFolders": "All",
+    "renameFolder": "Rename",
+    "renameTitle": "Rename folder",
+    "renameBody": "Everything going into this folder (and its sub-folders) goes to the new path. Typing an existing folder's path merges the two.",
+    "renameHint": "Use / for sub-folders, e.g. Family/Wedding (June 2023). Your choice is remembered next time.",
+    "folderShort": "FOLDER",
+    "folderUnit": "Folder, as a whole",
+    "event": "Event",
+    "eventCount_one": "{{count}} photo/video",
+    "eventCount_other": "{{count}} photos/videos",
+    "showFiles": "Show files",
+    "hideFiles": "Hide"
   },
   "approve": {
     "title": "Apply now?",
@@ -373,14 +387,15 @@
       "ai": "AI",
       "apply": "Report / Apply",
       "data": "Data",
-      "categories": "Categories"
+      "categories": "Categories",
+      "organize": "Organising"
     },
     "advanced": "Advanced",
     "reset": "Restore defaults",
     "resetTitle": "Reset settings?",
     "resetBody": "All settings go back to defaults. Selected folders, language and the API key are kept.",
     "locked": "(cannot be changed, for safety)",
-    "aiIntro": "The rules sort most files on their own. AI only helps with the files they are unsure about.",
+    "aiIntro": "When organising by topic, AI looks at every file, folder and event, then designs the folder structure. When organising by type it only helps with files the rules are unsure about.",
     "providerDesc": {
       "none": "Free, offline.",
       "anthropic": "Fast, very good; ~1 cent / 50 files.",
@@ -666,6 +681,27 @@
           "label": "Log detail",
           "desc": "Contents and keys are never written."
         }
+      },
+      "organize": {
+        "style": {
+          "label": "Organising style",
+          "desc": "By topic: AI understands the files and builds topic folders (e.g. Wedding, Game Dev). By type: classic folders (Photos, Documents…)."
+        },
+        "existingFolders": {
+          "label": "My coherent folders",
+          "desc": "Folders like a sound pack, a course or an album are never split."
+        },
+        "hint": {
+          "label": "What do you use this computer for? (optional)",
+          "desc": "A hint for the AI that designs the folders, e.g. \"I make games, I'm at university\"."
+        },
+        "maxDepth": {
+          "label": "Maximum folder depth"
+        },
+        "cloudImages": {
+          "label": "Send image previews to the cloud",
+          "desc": "When off, only a local model (LM Studio) sees photo contents; Claude only gets names and dates."
+        }
       }
     },
     "o": {
@@ -720,6 +756,16 @@
           "error": "Errors only",
           "info": "Normal",
           "debug": "Detailed"
+        }
+      },
+      "organize": {
+        "style": {
+          "topic": "By topic (AI)",
+          "type": "By type (classic)"
+        },
+        "existingFolders": {
+          "moveWhole": "Move as a whole to a fitting place",
+          "keep": "Leave where they are"
         }
       }
     },
@@ -855,5 +901,28 @@
     "abort": "Give up entirely",
     "keepGoing": "Keep going",
     "stop": "Stop"
+  },
+  "kind": {
+    "photo": "Photo",
+    "screenshot_phone": "Screenshot (phone)",
+    "screenshot_pc": "Screenshot (computer)",
+    "document_photo": "Photo of a document",
+    "image": "Image",
+    "document": "Document",
+    "spreadsheet": "Spreadsheet",
+    "presentation": "Presentation",
+    "video": "Video",
+    "screen_recording": "Screen recording",
+    "music": "Music",
+    "sound_effect": "Sound effect",
+    "voice_note": "Voice note",
+    "game_asset": "Game asset",
+    "design_asset": "Design file",
+    "font": "Font",
+    "code": "Code / project",
+    "installer": "Installer",
+    "archive": "Archive",
+    "ebook": "E-book / paper",
+    "other": "Other"
   }
 }

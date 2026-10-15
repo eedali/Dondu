@@ -14,8 +14,12 @@ export function FileIcon({
   item: PlanItem
   size?: number
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const url = thumbUrl(item.thumbPath)
-  const ext = baseName(item.sourcePath).split('.').pop()?.slice(0, 4).toUpperCase() ?? ''
+  const folder = item.flags.includes('folder_unit')
+  const ext = folder
+    ? t('report.folderShort')
+    : (baseName(item.sourcePath).split('.').pop()?.slice(0, 4).toUpperCase() ?? '')
   if (url)
     return (
       <img
@@ -124,9 +128,25 @@ export function ItemRow({
         )}
         {item.source === 'ai' && <Badge tone="accent">AI</Badge>}
         {item.userEdited && <Badge>{t('report.edited')}</Badge>}
-        <Badge>{categoryName(categories, item.category, i18n.language)}</Badge>
+        {item.flags.includes('folder_unit') && (
+          <Badge tone="accent">{t('report.folderUnit')}</Badge>
+        )}
+        <Badge>{kindOrCategory(categories, item.category, i18n.language, t)}</Badge>
         <ConfidenceDots value={item.confidence} label={t('report.confidence')} />
       </div>
     </li>
   )
+}
+
+/** Revision 1 items carry a content kind; classic ones a category id. */
+export function kindOrCategory(
+  categories: Parameters<typeof categoryName>[0],
+  id: string,
+  lang: string,
+  t: (k: string) => string,
+): string {
+  if (categories.some((c) => c.id === id)) return categoryName(categories, id, lang)
+  const k = `kind.${id}`
+  const v = t(k)
+  return v === k ? id : v
 }

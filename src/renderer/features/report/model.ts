@@ -65,3 +65,50 @@ export function relTarget(plan: Plan, it: PlanItem): string {
 export function rootOf(plan: Plan, p: string): string | undefined {
   return plan.roots.find((r) => p.toLowerCase().startsWith(r.toLowerCase()))
 }
+
+export interface TreeNode {
+  /** groupKey-style id: "<root>|<rel>" */
+  key: string
+  root: string
+  rel: string
+  name: string
+  depth: number
+  /** Items directly in this folder plus in its sub-folders. */
+  count: number
+}
+
+/** Target folders as a flat, depth-ordered tree (revision 1 report view). */
+export function folderTree(items: PlanItem[]): TreeNode[] {
+  const counts = new Map<string, { root: string; rel: string; count: number }>()
+  for (const it of items) {
+    if (it.groupKey.startsWith('__') || it.action === 'skip') continue
+    const [root = '', rel = ''] = it.groupKey.split('|')
+    const segs = rel.split('/').filter(Boolean)
+    for (let i = 0; i <= segs.length; i++) {
+      const r = segs.slice(0, i).join('/')
+      const k = `${root}|${r}`
+      const c = counts.get(k) ?? { root, rel: r, count: 0 }
+      c.count++
+      counts.set(k, c)
+    }
+  }
+  return [...counts.entries()]
+    .map(([key, c]) => ({
+      key,
+      root: c.root,
+      rel: c.rel,
+      name: c.rel
+        ? c.rel.split('/').pop()!
+        : (c.root.split(/[\/]/).filter(Boolean).pop() ?? c.root),
+      depth: c.rel ? c.rel.split('/').length : 0,
+      count: c.count,
+    }))
+    .sort((a, b) => (a.root + '|' + a.rel).localeCompare(b.root + '|' + b.rel, 'tr'))
+}
+
+/** Does this item go into `node` (or one of its sub-folders)? */
+export function inFolder(it: PlanItem, node: { root: string; rel: string }): boolean {
+  const [root = '', rel = ''] = it.groupKey.split('|')
+  if (root !== node.root) return false
+  return !node.rel || rel === node.rel || rel.startsWith(`${node.rel}/`)
+}
