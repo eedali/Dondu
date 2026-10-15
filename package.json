@@ -1,7 +1,7 @@
 {
   "name": "dondu",
   "productName": "Döndü",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Dağınık dosyaları seçtiğiniz klasörler içinde anlayıp düzenleyen, her şeyi geri alınabilir yapan masaüstü uygulaması.",
   "main": "./out/main/index.js",
   "author": "Bülent <bulent@ko48.com>",

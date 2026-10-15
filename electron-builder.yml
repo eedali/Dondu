@@ -1,5 +1,8 @@
 appId: com.dondu.app
-productName: Döndü
+# ASCII on purpose: on macOS the bundle's helper apps are named after productName
+# ("<name> Helper.app"), and with "Döndü" the packaged app traps at launch.
+# Users still see "Döndü": CFBundleDisplayName, window title, shortcuts, DMG title.
+productName: Dondu
 copyright: Copyright © 2026 Bülent
 directories:
   output: dist

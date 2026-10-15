@@ -2,6 +2,11 @@
 
 Bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.2.2] — 2026-10-15
+
+### Düzeltildi
+- macOS: uygulama açılışta hâlâ çöküyordu. Asıl neden, paketin içindeki adlarda Türkçe karakter ("Döndü") olmasıydı; iç adlar artık "Dondu", görünen ad yine "Döndü". Mac paketi yayından önce GitHub'ın Mac'inde açılıp pencere çizdiği doğrulanıyor.
+
 ## [0.2.1] — 2026-10-15
 
 ### Düzeltildi
