@@ -18,6 +18,7 @@ import type {
   RunStats,
   RunStatus,
 } from '@shared/types'
+import { DEFAULT_CATEGORIES } from '@shared/categories'
 import type { SqlDb } from './driver'
 import { migrate } from './migrate'
 
@@ -114,6 +115,7 @@ interface FileDbRow {
   session_id: string
   root: string
   rel_path: string
+  rel_path_raw: string | null
   name: string
   ext: string
   kind: string
@@ -139,6 +141,7 @@ const toFile = (r: FileDbRow): FileRecord => ({
   sessionId: r.session_id,
   root: r.root,
   relPath: r.rel_path,
+  relPathRaw: r.rel_path_raw ?? undefined,
   name: r.name,
   ext: r.ext,
   kind: r.kind as FileKind,
@@ -164,10 +167,10 @@ export class FileRepo {
 
   insertMany(files: FileRecord[]): void {
     const st = this.db.prepare(
-      `INSERT OR REPLACE INTO files (id, session_id, root, rel_path, name, ext, kind, family, size, mtime, ctime, mime,
+      `INSERT OR REPLACE INTO files (id, session_id, root, rel_path, rel_path_raw, name, ext, kind, family, size, mtime, ctime, mime,
         is_hidden, is_cloud_placeholder, is_locked, hash_fast, hash_full, phash, sensitive, sensitive_reason,
         rule_category, rule_confidence)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     this.db.transaction(() => {
       for (const f of files) {
@@ -176,6 +179,7 @@ export class FileRepo {
           f.sessionId,
           f.root,
           f.relPath,
+          f.relPathRaw ?? null,
           f.name,
           f.ext,
           f.kind,
@@ -838,6 +842,8 @@ export interface Repos {
 
 export function createRepos(db: SqlDb): Repos {
   migrate(db)
+  const categories = new CategoryRepo(db)
+  categories.seed(DEFAULT_CATEGORIES)
   return {
     db,
     sessions: new SessionRepo(db),
@@ -845,7 +851,7 @@ export function createRepos(db: SqlDb): Repos {
     plans: new PlanRepo(db),
     journal: new JournalRepo(db),
     runs: new RunRepo(db),
-    categories: new CategoryRepo(db),
+    categories,
     aiCache: new AiCacheRepo(db),
     corrections: new CorrectionRepo(db),
   }

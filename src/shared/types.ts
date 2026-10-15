@@ -23,6 +23,8 @@ export interface FileRecord {
   sessionId: string
   root: string
   relPath: string
+  /** On-disk spelling when it differs from the NFC `relPath` (e.g. NFD names on Windows). */
+  relPathRaw?: string
   name: string
   ext: string
   kind: FileKind
@@ -149,6 +151,8 @@ export interface PlanSummary {
   duplicates: number
   review: number
   bytes: number
+  /** Sub-folder name inside the quarantine folder for this plan. */
+  quarantineLabel?: string
   ai?: { files: number; tokensIn: number; tokensOut: number; usd: number; failedBatches: number }
 }
 
@@ -165,7 +169,10 @@ export interface Plan {
 
 export type PlanItemPatch = Partial<
   Pick<PlanItem, 'targetPath' | 'enabled' | 'category' | 'suggestedName' | 'sensitive'>
->
+> & {
+  /** Move every item into this folder (absolute), keeping each file name. */
+  targetDir?: string
+}
 
 export interface AIClassifyInput {
   id: string

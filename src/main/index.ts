@@ -12,6 +12,7 @@ import { openBetterSqlite } from './db/better-sqlite3'
 import { createRepos } from './db/repos'
 import { registerIpc } from './ipc'
 import { setMainWindow } from './ipc/registry'
+import { runRecovery } from './services/apply'
 import { initLog, log } from './services/log'
 import { electronThumbnailer } from './services/thumbnailer'
 import { SettingsStore } from './settings'
@@ -80,7 +81,7 @@ function createWindow(): BrowserWindow {
   // Dev tooling: DONDU_ROUTE / DONDU_AUTOSCAN / DONDU_AUTOPLAN are passed as query params.
   const query: Record<string, string> = {}
   if (!app.isPackaged) {
-    for (const k of ['ROUTE', 'AUTOSCAN', 'AUTOPLAN'])
+    for (const k of ['ROUTE', 'AUTOSCAN', 'AUTOPLAN', 'AUTOAPPLY'])
       if (process.env[`DONDU_${k}`]) query[k.toLowerCase()] = process.env[`DONDU_${k}`]!
   }
   const qs = new URLSearchParams(query).toString()
@@ -146,9 +147,10 @@ if (!app.requestSingleInstanceLock()) {
     }
   })
 
-  void app.whenReady().then(() => {
+  void app.whenReady().then(async () => {
     if (process.platform === 'win32') app.setAppUserModelId('com.dondu.app')
     initContext()
+    await runRecovery()
     registerIpc()
     setMainWindow(createWindow())
 

@@ -124,10 +124,239 @@
     "other": "Other"
   },
   "plan": {
-    "build": "Build the plan"
+    "build": "Build the plan",
+    "building": "Building the plan…"
   },
   "errors": {
     "scan_running": "A scan is already running.",
-    "scan_failed": "The scan could not be completed."
+    "scan_failed": "The scan could not be completed.",
+    "apply_running": "Another operation is running.",
+    "plan_not_draft": "An approved plan cannot change; make a copy first.",
+    "target_outside_roots": "The target must be inside the selected folders.",
+    "ai_failed": "The AI step did not work; the plan was built with rules only.",
+    "trash_failed": "Could not send to the trash."
+  },
+  "estimate": {
+    "title": "AI estimate",
+    "calculating": "Calculating…",
+    "nothing": "The rules classified everything; no AI needed.",
+    "line": "{{files}} files will be sent to AI · ~{{tokens}} tokens · ~{{usd}}",
+    "free": "free (local)",
+    "cached_one": "{{count}} file is cached; no charge again.",
+    "cached_other": "{{count}} files are cached; no charge again.",
+    "images_one": "{{count}} file is sent with a small preview.",
+    "images_other": "{{count}} files are sent with a small preview.",
+    "overUsd": "The estimate exceeds the per-run limit ({{limit}}).",
+    "overTokens": "The estimate exceeds the per-run token limit ({{limit}}).",
+    "overHint": "Lower the image resolution or send only uncertain files.",
+    "privacy": "Sensitive files are never sent to the cloud.",
+    "rulesOnly": "Rules only",
+    "run": "Build with {{provider}}"
+  },
+  "ai": {
+    "provider": {
+      "none": "Rules only",
+      "anthropic": "Claude",
+      "lmstudio": "LM Studio"
+    }
+  },
+  "report": {
+    "title": "Report",
+    "emptyTitle": "No plan yet",
+    "emptyBody": "Scan first, then build the plan.",
+    "export": "Export",
+    "exported": "Saved",
+    "approve": "Approve and apply",
+    "applyApproved": "Apply",
+    "copyToEdit": "Copy to edit",
+    "seeHistory": "See history",
+    "locked": {
+      "approved": "This plan is approved and can no longer change. Make a copy to edit it.",
+      "applying": "This plan is being applied.",
+      "applied": "This plan was applied. Open History to undo it.",
+      "partial": "This plan was partly applied. Details in History.",
+      "undone": "This plan's changes were undone.",
+      "draft": ""
+    },
+    "aiUsed": "AI: {{files}} files · {{tin}} input / {{tout}} output tokens · ${{usd}}",
+    "aiFailed": "Some batches did not answer; those files were planned with rules.",
+    "tab": {
+      "plan": "Plan",
+      "review": "Review",
+      "dupes": "Duplicates",
+      "sensitive": "Sensitive",
+      "skipped": "Skipped"
+    },
+    "sum": {
+      "move": "to move",
+      "rename": "to rename",
+      "quarantine": "to quarantine",
+      "skip": "to skip",
+      "sensitive": "sensitive"
+    },
+    "bytes": "Total to move: {{size}}",
+    "search": "Search",
+    "category": "Category",
+    "allCategories": "All categories",
+    "confidence": "Confidence",
+    "allConfidence": "All confidence levels",
+    "confHigh": "High confidence",
+    "confMid": "Medium confidence",
+    "confLow": "Low confidence",
+    "noItems": "No files in this tab",
+    "rootLevel": "(root)",
+    "changeTarget": "Change target",
+    "skipAll": "Skip all",
+    "includeAll": "Include all",
+    "showMore": "Show {{count}} more",
+    "group": {
+      "dupes": "Duplicates → Quarantine",
+      "near": "Very similar images",
+      "inplace": "Already in place",
+      "cloud": "In the cloud, not downloaded — left alone",
+      "skip": "Left alone"
+    },
+    "include": "Include {{name}}",
+    "details": "Details of {{name}}",
+    "sensitive": "Sensitive",
+    "edited": "Edited",
+    "flag": {
+      "duplicate": "Duplicate",
+      "near": "Similar",
+      "leavesIcloud": "Leaves iCloud"
+    },
+    "detailTitle": "Details",
+    "newName": "New name",
+    "learnHint": "If you change the category, Döndü remembers your choice for files like this.",
+    "markSensitive": "Mark as sensitive",
+    "markSensitiveHint": "Sensitive files are never sent to the cloud.",
+    "source": {
+      "rule": "rules",
+      "ai": "AI",
+      "user": "you"
+    },
+    "d": {
+      "from": "Now",
+      "to": "Goes to",
+      "size": "Size",
+      "modified": "Modified",
+      "taken": "Taken",
+      "camera": "Camera",
+      "dims": "Dimensions",
+      "pages": "Pages",
+      "duration": "Duration",
+      "reason": "Reason"
+    },
+    "folderDialog": {
+      "title": "Change target folder",
+      "body_one": "{{count}} file will go to this folder.",
+      "body_other": "{{count}} files will go to this folder.",
+      "root": "Root folder",
+      "label": "Folder inside {{root}}"
+    }
+  },
+  "approve": {
+    "title": "Apply now?",
+    "counts": "{{move}} files will move, {{rename}} will be renamed, {{quarantine}} duplicates go to quarantine, {{skip}} files stay untouched.",
+    "promise": "Döndü never deletes anything. Duplicates go to the Döndü Karantina folder; everything can be undone from History.",
+    "quarantine": "Quarantine folder:",
+    "trashWarn_one": "{{count}} file goes to the system trash; you would restore it from there by hand.",
+    "trashWarn_other": "{{count}} files go to the system trash; you would restore them from there by hand.",
+    "double": "This is a big change: {{count}} files. Are you sure?",
+    "apply": "Apply",
+    "yesN": "Yes, {{count}} files",
+    "checking": "Running final checks…",
+    "issuesTitle": "Some files changed",
+    "issuesBody_one": "{{count}} file changed after the scan or cannot be used right now. I can continue without touching it.",
+    "issuesBody_other": "{{count}} files changed after the scan or cannot be used right now. I can continue without touching them.",
+    "stop": "Stop",
+    "skipAndContinue": "Skip these, continue with {{count}} files",
+    "issue": {
+      "changed": "changed",
+      "missing": "not found",
+      "outside_root": "outside selected folders",
+      "locked": "locked / open",
+      "cloud": "in the cloud",
+      "not_writable": "not writable",
+      "no_space": "not enough space"
+    }
+  },
+  "apply": {
+    "title": "Applying",
+    "undoTitle": "Undoing",
+    "starting": "Starting…",
+    "working": "Putting files in place",
+    "paused": "Paused",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop",
+    "elapsed": "Elapsed: {{time}}",
+    "remaining": "Remaining: ~{{time}}",
+    "errorStopped": "Something went wrong with a file; I stopped.",
+    "skipContinue": "Skip and continue",
+    "errors_one": "{{count}} problem",
+    "errors_other": "{{count}} problems",
+    "doneMsg": "{{done}} files placed, {{failed}} skipped. To undo: History → this run → Undo.",
+    "undoDoneMsg": "{{done}} operations undone.",
+    "seeHistory": "See history",
+    "undo": "Undo",
+    "status": {
+      "running": "Running",
+      "paused": "Paused",
+      "done": "Done",
+      "partial": "Partly done",
+      "cancelled": "Stopped",
+      "failed": "Failed"
+    }
+  },
+  "history": {
+    "title": "History",
+    "emptyTitle": "Nothing applied yet",
+    "emptyBody": "Every plan you apply is listed here and can be undone.",
+    "kindApply": "Tidy-up",
+    "kindUndo": "Undo",
+    "counts": "{{done}} done · {{skipped}} skipped · {{failed}} errors",
+    "undoAll": "Undo all",
+    "redo": "Re-apply",
+    "undoOne": "Undo",
+    "osTrash": "System trash",
+    "undone_one": "{{count}} operation undone.",
+    "undone_other": "{{count}} operations undone.",
+    "changedWarn_one": "{{count}} file changed after it was moved; I left it alone.",
+    "changedWarn_other": "{{count}} files changed after they were moved; I left them alone.",
+    "trashed_one": "{{count}} file went to the trash; please restore it from Trash by hand:",
+    "trashed_other": "{{count}} files went to the trash; please restore them from Trash by hand:",
+    "forceTitle": "Changed files",
+    "forceBody_one": "{{count}} file was changed after Döndü moved it. Move it back anyway?",
+    "forceBody_other": "{{count}} files were changed after Döndü moved them. Move them back anyway?",
+    "forceUndo": "Undo anyway",
+    "skipChanged": "Skip",
+    "col": {
+      "file": "File",
+      "where": "Where",
+      "status": "Status"
+    },
+    "rowStatus": {
+      "done": "Done",
+      "undone": "Undone",
+      "failed": "Error",
+      "skipped": "Skipped"
+    }
+  },
+  "quarantine": {
+    "info": "{{size}} in quarantine.",
+    "reminder": "Files have waited in quarantine for {{days}} days ({{size}}). Empty it?",
+    "empty": "Empty quarantine",
+    "confirmTitle": "Send quarantine to the trash?",
+    "confirmBody": "The quarantine folder goes to the system trash, where you can still restore it. Döndü never deletes directly.",
+    "toTrash": "Send to trash"
+  },
+  "recovery": {
+    "title": "An unfinished operation was found",
+    "body": "An operation started on {{date}} did not finish (the app may have closed). I restored its state from the journal.",
+    "safe": "No file was lost; every step is in the journal.",
+    "complete": "Continue",
+    "undo": "Undo",
+    "inspect": "Inspect"
   }
 }

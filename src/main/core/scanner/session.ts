@@ -6,7 +6,7 @@ import type { FileMeta, FileRecord, ScanProgress, ScanSummary } from '@shared/ty
 import type { Repos } from '../../db/repos'
 import { dHashFromGray9x8 } from '../hash'
 import type { TaskRunner } from '../pool'
-import { joinRel, mergeRoots } from '../platform/paths'
+import { absOf, mergeRoots } from '../platform/paths'
 import { detectSensitive } from '../rules/sensitive'
 import { dirKey, walk } from './walker'
 
@@ -116,7 +116,7 @@ export async function runScan(deps: ScanDeps, opts: ScanOptions): Promise<ScanSu
     if (deps.thumbnailer) await fs.mkdir(deps.thumbsDir, { recursive: true })
 
     const analyzeOne = async (f: FileRecord): Promise<void> => {
-      const abs = joinRel(f.root, f.relPath)
+      const abs = absOf(f)
       let res
       try {
         res = await runner.run({
@@ -227,7 +227,7 @@ export async function runScan(deps: ScanDeps, opts: ScanOptions): Promise<ScanSu
         cands.map(async (f) => {
           if (signal?.aborted) return
           try {
-            const h = await runner.run({ type: 'fullHash', path: joinRel(f.root, f.relPath) })
+            const h = await runner.run({ type: 'fullHash', path: absOf(f) })
             updates.push({ id: f.id, patch: { hashFull: h } })
           } catch {
             /* unreadable: not a duplicate candidate */

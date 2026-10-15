@@ -58,3 +58,8 @@ export function mergeRoots(roots: string[]): string[] {
   for (const r of sorted) if (!out.some((o) => isInside(r, o))) out.push(r)
   return out
 }
+
+/** Absolute on-disk path of an inventory record (uses the raw spelling when it differs). */
+export function absOf(f: { root: string; relPath: string; relPathRaw?: string }): string {
+  return joinRel(f.root, f.relPathRaw ?? f.relPath)
+}

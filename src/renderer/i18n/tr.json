@@ -124,10 +124,239 @@
     "other": "Diğer"
   },
   "plan": {
-    "build": "Planı oluştur"
+    "build": "Planı oluştur",
+    "building": "Plan hazırlanıyor…"
   },
   "errors": {
     "scan_running": "Zaten bir tarama sürüyor.",
-    "scan_failed": "Tarama tamamlanamadı."
+    "scan_failed": "Tarama tamamlanamadı.",
+    "apply_running": "Şu anda başka bir işlem sürüyor.",
+    "plan_not_draft": "Onaylanmış plan değiştirilemez; önce kopyasını oluşturun.",
+    "target_outside_roots": "Hedef, seçili klasörlerin dışında olamaz.",
+    "ai_failed": "Yapay zekâ adımı çalışmadı; plan yalnızca kurallarla oluşturuldu.",
+    "trash_failed": "Çöpe gönderilemedi."
+  },
+  "estimate": {
+    "title": "Yapay zekâ tahmini",
+    "calculating": "Hesaplanıyor…",
+    "nothing": "Kurallar her şeyi sınıflandırdı; yapay zekâya gerek yok.",
+    "line": "{{files}} dosya yapay zekâya gönderilecek · ~{{tokens}} token · ~{{usd}}",
+    "free": "ücretsiz (yerel)",
+    "cached_one": "{{count}} dosyanın sonucu önbellekte; tekrar ücret yok.",
+    "cached_other": "{{count}} dosyanın sonucu önbellekte; tekrar ücret yok.",
+    "images_one": "{{count}} dosya küçük önizlemesiyle gönderilecek.",
+    "images_other": "{{count}} dosya küçük önizlemesiyle gönderilecek.",
+    "overUsd": "Tahmin, çalıştırma başına üst sınırı ({{limit}}) aşıyor.",
+    "overTokens": "Tahmin, çalıştırma başına token sınırını ({{limit}}) aşıyor.",
+    "overHint": "Görsel çözünürlüğünü düşürün ya da yalnızca belirsiz dosyaları gönderin.",
+    "privacy": "Hassas dosyalar hiçbir zaman buluta gönderilmez.",
+    "rulesOnly": "Yalnızca kurallarla",
+    "run": "{{provider}} ile oluştur"
+  },
+  "ai": {
+    "provider": {
+      "none": "Yalnızca kurallar",
+      "anthropic": "Claude",
+      "lmstudio": "LM Studio"
+    }
+  },
+  "report": {
+    "title": "Rapor",
+    "emptyTitle": "Henüz plan yok",
+    "emptyBody": "Önce tarayın, sonra planı oluşturun.",
+    "export": "Dışa aktar",
+    "exported": "Kaydedildi",
+    "approve": "Onayla ve uygula",
+    "applyApproved": "Uygula",
+    "copyToEdit": "Düzenlemek için kopyala",
+    "seeHistory": "Geçmiş'te gör",
+    "locked": {
+      "approved": "Bu plan onaylandı ve artık değiştirilemez. Değiştirmek için kopyasını oluşturun.",
+      "applying": "Bu plan şu anda uygulanıyor.",
+      "applied": "Bu plan uygulandı. Geri almak için Geçmiş'i açın.",
+      "partial": "Bu plan kısmen uygulandı. Ayrıntılar Geçmiş'te.",
+      "undone": "Bu planın uygulaması geri alındı.",
+      "draft": ""
+    },
+    "aiUsed": "Yapay zekâ: {{files}} dosya · {{tin}} girdi / {{tout}} çıktı token · ${{usd}}",
+    "aiFailed": "Bazı partiler yanıt vermedi; onlar kurallarla planlandı.",
+    "tab": {
+      "plan": "Plan",
+      "review": "Gözden geçir",
+      "dupes": "Kopyalar",
+      "sensitive": "Hassas",
+      "skipped": "Atlananlar"
+    },
+    "sum": {
+      "move": "taşınacak",
+      "rename": "yeniden adlandırılacak",
+      "quarantine": "karantinaya",
+      "skip": "atlanacak",
+      "sensitive": "hassas"
+    },
+    "bytes": "Taşınacak toplam: {{size}}",
+    "search": "Ara",
+    "category": "Kategori",
+    "allCategories": "Tüm kategoriler",
+    "confidence": "Güven",
+    "allConfidence": "Tüm güven düzeyleri",
+    "confHigh": "Yüksek güven",
+    "confMid": "Orta güven",
+    "confLow": "Düşük güven",
+    "noItems": "Bu sekmede dosya yok",
+    "rootLevel": "(kök)",
+    "changeTarget": "Hedefi değiştir",
+    "skipAll": "Tümünü atla",
+    "includeAll": "Tümünü dahil et",
+    "showMore": "{{count}} dosya daha göster",
+    "group": {
+      "dupes": "Kopyalar → Karantina",
+      "near": "Çok benzer görseller",
+      "inplace": "Zaten yerinde",
+      "cloud": "Bulutta, indirilmemiş — dokunulmadı",
+      "skip": "Dokunulmayanlar"
+    },
+    "include": "{{name}} dahil et",
+    "details": "{{name}} ayrıntıları",
+    "sensitive": "Hassas",
+    "edited": "Düzenlendi",
+    "flag": {
+      "duplicate": "Kopya",
+      "near": "Benzer",
+      "leavesIcloud": "iCloud dışına çıkar"
+    },
+    "detailTitle": "Ayrıntılar",
+    "newName": "Yeni ad",
+    "learnHint": "Kategoriyi değiştirirseniz Döndü bu tür dosyalar için tercihinizi hatırlar.",
+    "markSensitive": "Hassas olarak işaretle",
+    "markSensitiveHint": "Hassas dosyalar buluta gönderilmez.",
+    "source": {
+      "rule": "kurallar",
+      "ai": "yapay zekâ",
+      "user": "siz"
+    },
+    "d": {
+      "from": "Şu an",
+      "to": "Gideceği yer",
+      "size": "Boyut",
+      "modified": "Değiştirilme",
+      "taken": "Çekilme",
+      "camera": "Kamera",
+      "dims": "Boyutlar",
+      "pages": "Sayfa",
+      "duration": "Süre",
+      "reason": "Gerekçe"
+    },
+    "folderDialog": {
+      "title": "Hedef klasörü değiştir",
+      "body_one": "{{count}} dosya bu klasöre gidecek.",
+      "body_other": "{{count}} dosya bu klasöre gidecek.",
+      "root": "Kök klasör",
+      "label": "{{root}} içindeki klasör"
+    }
+  },
+  "approve": {
+    "title": "Uygulansın mı?",
+    "counts": "{{move}} dosya taşınacak, {{rename}} yeniden adlandırılacak, {{quarantine}} kopya karantinaya alınacak, {{skip}} dosyaya dokunulmayacak.",
+    "promise": "Döndü hiçbir dosyayı silmez. Kopyalar Döndü Karantina klasörüne gider; her şey Geçmiş'ten geri alınabilir.",
+    "quarantine": "Karantina klasörü:",
+    "trashWarn_one": "{{count}} dosya işletim sistemi çöpüne gönderilecek; çöpten elle geri almanız gerekir.",
+    "trashWarn_other": "{{count}} dosya işletim sistemi çöpüne gönderilecek; çöpten elle geri almanız gerekir.",
+    "double": "Bu büyük bir işlem: {{count}} dosya. Emin misiniz?",
+    "apply": "Uygula",
+    "yesN": "Evet, {{count}} dosya",
+    "checking": "Son kontroller yapılıyor…",
+    "issuesTitle": "Bazı dosyalar değişmiş",
+    "issuesBody_one": "{{count}} dosya taramadan sonra değişti ya da şu an kullanılamıyor. Ona dokunmadan devam edebilirim.",
+    "issuesBody_other": "{{count}} dosya taramadan sonra değişti ya da şu an kullanılamıyor. Onlara dokunmadan devam edebilirim.",
+    "stop": "Durdur",
+    "skipAndContinue": "Bunları atla, {{count}} dosyayla devam et",
+    "issue": {
+      "changed": "değişmiş",
+      "missing": "bulunamadı",
+      "outside_root": "seçili klasör dışında",
+      "locked": "kilitli / açık",
+      "cloud": "bulutta",
+      "not_writable": "yazılamıyor",
+      "no_space": "yer yetersiz"
+    }
+  },
+  "apply": {
+    "title": "Uygulanıyor",
+    "undoTitle": "Geri alınıyor",
+    "starting": "Başlıyor…",
+    "working": "Dosyalar yerleştiriliyor",
+    "paused": "Duraklatıldı",
+    "pause": "Duraklat",
+    "resume": "Devam et",
+    "stop": "Durdur",
+    "elapsed": "Geçen: {{time}}",
+    "remaining": "Kalan: ~{{time}}",
+    "errorStopped": "Bir dosyada sorun çıktı; durdum.",
+    "skipContinue": "Atla ve devam et",
+    "errors_one": "{{count}} sorun",
+    "errors_other": "{{count}} sorun",
+    "doneMsg": "{{done}} dosya yerleşti, {{failed}} dosya atlandı. Geri almak için: Geçmiş → bu çalıştırma → Geri al.",
+    "undoDoneMsg": "{{done}} işlem geri alındı.",
+    "seeHistory": "Geçmiş'te gör",
+    "undo": "Geri al",
+    "status": {
+      "running": "Sürüyor",
+      "paused": "Duraklatıldı",
+      "done": "Tamamlandı",
+      "partial": "Kısmen tamamlandı",
+      "cancelled": "Durduruldu",
+      "failed": "Başarısız"
+    }
+  },
+  "history": {
+    "title": "Geçmiş",
+    "emptyTitle": "Henüz bir şey uygulanmadı",
+    "emptyBody": "Uyguladığınız her plan burada listelenir ve geri alınabilir.",
+    "kindApply": "Düzenleme",
+    "kindUndo": "Geri alma",
+    "counts": "{{done}} tamam · {{skipped}} atlandı · {{failed}} hata",
+    "undoAll": "Tümünü geri al",
+    "redo": "Yeniden uygula",
+    "undoOne": "Geri al",
+    "osTrash": "İşletim sistemi çöpü",
+    "undone_one": "{{count}} işlem geri alındı.",
+    "undone_other": "{{count}} işlem geri alındı.",
+    "changedWarn_one": "{{count}} dosya taşındıktan sonra değişmiş; ona dokunmadım.",
+    "changedWarn_other": "{{count}} dosya taşındıktan sonra değişmiş; onlara dokunmadım.",
+    "trashed_one": "{{count}} dosya çöpe gitmişti; lütfen Çöp'ten elle geri alın:",
+    "trashed_other": "{{count}} dosya çöpe gitmişti; lütfen Çöp'ten elle geri alın:",
+    "forceTitle": "Değişmiş dosyalar",
+    "forceBody_one": "{{count}} dosya, Döndü taşıdıktan sonra değiştirilmiş. Yine de eski yerine geri götüreyim mi?",
+    "forceBody_other": "{{count}} dosya, Döndü taşıdıktan sonra değiştirilmiş. Yine de eski yerlerine geri götüreyim mi?",
+    "forceUndo": "Yine de geri al",
+    "skipChanged": "Atla",
+    "col": {
+      "file": "Dosya",
+      "where": "Nereye",
+      "status": "Durum"
+    },
+    "rowStatus": {
+      "done": "Yapıldı",
+      "undone": "Geri alındı",
+      "failed": "Hata",
+      "skipped": "Atlandı"
+    }
+  },
+  "quarantine": {
+    "info": "Karantinada {{size}} var.",
+    "reminder": "Karantinadaki dosyalar {{days}} gündür bekliyor ({{size}}). Boşaltmak ister misiniz?",
+    "empty": "Karantinayı boşalt",
+    "confirmTitle": "Karantina çöpe gönderilsin mi?",
+    "confirmBody": "Karantina klasörü işletim sisteminin çöpüne gönderilir; oradan hâlâ geri alabilirsiniz. Döndü doğrudan silmez.",
+    "toTrash": "Çöpe gönder"
+  },
+  "recovery": {
+    "title": "Yarım kalan işlem bulundu",
+    "body": "{{date}} tarihinde başlayan bir işlem tamamlanamadı (uygulama kapanmış olabilir). Günlükten durumu toparladım.",
+    "safe": "Hiçbir dosya kaybolmadı; her adım günlükte kayıtlı.",
+    "complete": "Devam et",
+    "undo": "Geri al",
+    "inspect": "İncele"
   }
 }

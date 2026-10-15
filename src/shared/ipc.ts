@@ -7,6 +7,8 @@ import type {
   AIEstimate,
   ApplyProgress,
   Category,
+  FileMeta,
+  FileRecord,
   JournalRow,
   PendingRecovery,
   Plan,
@@ -104,6 +106,7 @@ export interface IpcInvokeMap {
   'plan:build': { args: [opts: { sessionId: string; useAI: boolean }]; result: Plan }
   'plan:cancel': { args: []; result: void }
   'plan:get': { args: [planId?: string]; result: Plan | null }
+  'file:details': { args: [fileId: string]; result: { file: FileRecord; meta: FileMeta } | null }
   'plan:update': {
     args: [planId: string, itemIds: string[], patch: PlanItemPatch]
     result: Plan

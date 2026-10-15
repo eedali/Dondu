@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
@@ -15,9 +16,12 @@ export async function tempDir(prefix = 'dondu-test-'): Promise<string> {
 /** Writes a tiny placeholder "thumbnail" and a deterministic gray grid (no Electron in tests). */
 export const stubThumbnailer: Thumbnailer = {
   async make(src, _edge, out) {
-    const st = await fs.stat(src)
+    // Deterministic pseudo-random grid from the content: unrelated files are never "near".
+    const digest = createHash('sha512')
+      .update(await fs.readFile(src))
+      .digest()
     await fs.writeFile(out, 'thumb')
-    const gray = new Uint8Array(72).map((_, i) => (st.size * (i + 1)) % 251)
+    const gray = new Uint8Array(72).map((_, i) => digest[i % 64]! ^ (i * 37))
     return { width: 10, height: 10, gray9x8: gray }
   },
 }

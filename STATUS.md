@@ -4,7 +4,7 @@
 
 ## Şu anki faz
 
-**Faz 2 — Kurallar, kopyalar, plan, rapor, uygula, geri al** (sırada)
+**Faz 3 — Yapay zekâ** (sırada)
 
 ## Yapıldı
 
@@ -13,17 +13,22 @@
 
 - Faz 1 — Tarayıcı + DB: better-sqlite3 (Electron ABI; testler `ELECTRON_RUN_AS_NODE` ile Electron'un Node'unda koşar), migrasyonlar, değiştirilebilir `SqlDb` arayüzü + repository'ler; `opendir+lstat` yürüyücü (dışlama globları, gizli, derinlik, paket/proje algılama, iCloud/OneDrive yer tutucu, NFC); worker_threads havuzu (`?nodeWorker`) ile içerik analizi; xxh3 hızlı + blake3 tam karma, dHash; çıkarıcılar (EXIF, PDF=pdfjs-dist, docx, xlsx, pptx, metin, ses/video, zip, iWork önizleme); hassas tespit (TC/IBAN/Luhn/HETU, ad, uzantı) — hassas dosyada alıntı/thumb saklanmaz; nativeImage küçük görsel + `dondu-thumb://` protokolü; Klasörler + Tarama ekranları; `npm run fixtures` (80 dosya)
 
+- Faz 2 — AI'sız MVP: ayarlar (zod + JSON + safeStorage), taksonomi seed'i; kural motoru (ekran görüntüsü TR/EN/FI/DE, EXIF, anahtar kelimeler TR/FI/EN, çöp, paket/proje); kopyalar (blake3 kesin, dHash yakın, HEIC/JPG kardeş, keepPolicy); naming (sanitize, şablon, ` (2)` çakışma, iki adımlı harf büyüklüğü); deterministik planner; Rapor (sekmeler, gruplar, satır/grup düzenleme, detay paneli, filtreler, HTML/MD/JSON dışa aktarma); onay akışı (ikinci onay, ön kontrol, değişen dosyaları atla); write-ahead journal ile applier (aynı birim rename, farklı birim kopya+blake3+karantina, mkdir takibi, boş kalan Döndü klasörlerini kaldırma, duraklat/iptal, ilk hatada dur); undo (çalıştırma/öğe, "(geri alındı)", değişen dosyada sor, undo'nun undo'su = yeniden uygula); açılış toparlaması + "yarım kalan işlem" diyaloğu; Geçmiş + karantina boşaltma (OS çöpü). Testler: round-trip, çökme, devam, çakışma, değişen kaynak, kök dışı, harf büyüklüğü, NFD/NFC, duraklat; birim: naming/rules/dupes/planner/sensitive
+
 ## Sırada
 
-1. Faz 2: naming, dupes, planner, rapor UI, applier + journal, undo, geçmiş
+1. Faz 3: AIProvider, Anthropic (Haiku 5.5), LM Studio, maliyet tahmini, önbellek, hassas kapısı
 
 ## Bilinen sorunlar / açık kararlar
 
 - Arayüz vurgu rengi logodan alındı (kobalt `#3D5AFE`, gece mavisi `#1A1F3A`); `docs/08` güncellendi.
 - macOS derlemesi yalnızca GitHub Actions üzerinde; Mac'te ilk gerçek test Faz 5'te
-- Geliştirme araçları (yalnızca paketlenmemiş uygulama): `DONDU_SCREENSHOT=<png>` pencere görüntüsü alıp kapanır; `DONDU_USERDATA=<dir>` ayrı veri klasörü; `DONDU_DEV_ROOTS=<yol>` kökleri ayarlar; `DONDU_AUTOSCAN=1`, `DONDU_ROUTE=<ekran>`
+- Geliştirme araçları (yalnızca paketlenmemiş uygulama): `DONDU_SCREENSHOT=<png>` pencere görüntüsü alıp kapanır; `DONDU_USERDATA=<dir>` ayrı veri klasörü; `DONDU_DEV_ROOTS=<yol>` kökleri ayarlar; `DONDU_AUTOSCAN=1`, `DONDU_AUTOPLAN=1`, `DONDU_AUTOAPPLY=1`, `DONDU_ROUTE=<ekran>`
+- Değişen kaynak dosyalar ön kontrolde yalnızca "atla" ile geçilebiliyor (doc "yine de uygula" seçeneği öneriyor; güvenlik için şimdilik yok)
+- `apply.concurrency` ayarı okunuyor ama uygulama şimdilik hep sıralı (güvenli varsayılan)
+- Diskteki ham ad NFC'den farklıysa (`rel_path_raw`) o yazımla taşınır; Windows'ta NFD adlar da çalışır
 - PDF için `pdf-parse` yerine doğrudan `pdfjs-dist` kullanıldı (pdf-parse v2 native `@napi-rs/canvas` istiyor)
 
 ## Son güncelleme
 
-2026-10-15 — Faz 1 tamamlandı
+2026-10-15 — Faz 2 tamamlandı

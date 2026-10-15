@@ -46,6 +46,8 @@ interface AppState {
 }
 
 let initStarted = false
+let autoplan = false
+let autoapply = false
 
 export const useApp = create<AppState>((set, get) => ({
   ready: false,
@@ -78,7 +80,22 @@ export const useApp = create<AppState>((set, get) => ({
       set({ scanProgress: p, scanning: !done })
       if (p.phase === 'error') set({ error: p.message ?? 'scan_failed' })
       if (done && p.phase !== 'error')
-        void api.invoke('scan:summary', p.sessionId).then((s) => set({ summary: s }))
+        void api.invoke('scan:summary', p.sessionId).then(async (s) => {
+          // A new scan supersedes older draft plans.
+          const plan = await api.invoke('plan:get')
+          set({ summary: s, plan: plan && plan.sessionId === s?.sessionId ? plan : null })
+          if (s && autoplan) {
+            const { buildPlan } = await import('../features/plan/PlanStart')
+            await buildPlan(s.sessionId, false)
+            const built = get().plan
+            if (autoapply && built) {
+              // Dev-only end-to-end check: approve and apply without clicking.
+              await api.invoke('plan:approve', built.id)
+              await api.invoke('apply:start', built.id)
+              set({ route: 'apply' })
+            }
+          }
+        })
     })
     api.on('plan:progress', (p) => set({ planProgress: p }))
     api.on('apply:progress', (p) => set({ applyProgress: p }))
@@ -87,6 +104,8 @@ export const useApp = create<AppState>((set, get) => ({
     const route = params.get('route') as Route | null
     if (route) set({ route })
     if (settings.roots.length) void get().refreshChecks(settings.roots)
+    autoplan = !!params.get('autoplan')
+    autoapply = !!params.get('autoapply')
     if (params.get('autoscan')) void get().startScan()
   },
 

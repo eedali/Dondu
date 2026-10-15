@@ -1,5 +1,4 @@
 import path from 'node:path'
-import { DEFAULT_CATEGORIES } from '@shared/categories'
 import type { Repos } from './db/repos'
 import type { TaskRunner } from './core/pool'
 import type { Thumbnailer } from './core/scanner/session'
@@ -28,7 +27,6 @@ let ctx: AppContext | null = null
 
 export function setContext(c: AppContext): void {
   ctx = c
-  c.repos.categories.seed(DEFAULT_CATEGORIES)
 }
 
 export function context(): AppContext {

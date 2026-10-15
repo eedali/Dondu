@@ -4,7 +4,7 @@ import path from 'node:path'
 import type { FileFamily, FileKind, FileRecord } from '@shared/types'
 import type { Settings } from '@shared/settings'
 import { platform } from '../platform'
-import { longPath, nfc, relPosix } from '../platform/paths'
+import { longPath, nfc, relPosix, toPosix } from '../platform/paths'
 import { Excluder } from './exclude'
 import { BUNDLE_EXTS, PROJECT_MARKER_EXTS, PROJECT_MARKERS, familyOf, splitExt } from './types'
 
@@ -85,6 +85,7 @@ export async function walk(opts: WalkOptions): Promise<WalkResult> {
         return // unreadable directory: skip silently (reported by access check)
       }
       const relDir = relPosix(root, dirAbs)
+      const rawRelDir = toPosix(path.relative(root, dirAbs))
       const hist: Record<string, number> = {}
       let subfolders = 0
 
@@ -93,6 +94,7 @@ export async function walk(opts: WalkOptions): Promise<WalkResult> {
         const abs = path.join(dirAbs, rawName)
         const name = nfc(rawName)
         const rel = relDir ? `${relDir}/${name}` : name
+        const rawRel = rawRelDir ? `${rawRelDir}/${rawName}` : rawName
 
         // Our own quarantine folder at the root is never scanned.
         if (!relDir && name.toLowerCase() === quarantineRel) continue
@@ -145,11 +147,13 @@ export async function walk(opts: WalkOptions): Promise<WalkResult> {
         } else if (kind === 'dir') subfolders++
 
         const placeholder = !!cloudReal || placeholders.has(nfc(abs))
+        const relPath = cloudReal ? (relDir ? `${relDir}/${cloudReal}` : cloudReal) : rel
         push({
           id: randomUUID(),
           sessionId: opts.sessionId,
           root,
-          relPath: cloudReal ? (relDir ? `${relDir}/${cloudReal}` : cloudReal) : rel,
+          relPath,
+          relPathRaw: rawRel !== relPath ? rawRel : undefined,
           name: displayName,
           ext,
           kind,

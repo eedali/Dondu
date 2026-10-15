@@ -2,10 +2,14 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useApp } from './store'
 import { useTheme } from './useTheme'
+import { ErrorToast } from './ErrorToast'
+import { Placeholder } from './Placeholder'
 import { FoldersScreen } from '../features/folders/FoldersScreen'
 import { ScanScreen } from '../features/scan/ScanScreen'
-import { Placeholder } from './Placeholder'
-import { ErrorToast } from './ErrorToast'
+import { ReportScreen } from '../features/report/ReportScreen'
+import { ApplyScreen } from '../features/apply/ApplyScreen'
+import { RecoveryDialog } from '../features/apply/RecoveryDialog'
+import { HistoryScreen } from '../features/history/HistoryScreen'
 
 export function App(): React.JSX.Element {
   const { i18n } = useTranslation()
@@ -27,11 +31,27 @@ export function App(): React.JSX.Element {
 
   if (!ready) return <div className="h-full bg-bg" />
 
+  const screen = (() => {
+    switch (route) {
+      case 'folders':
+        return <FoldersScreen />
+      case 'scan':
+        return <ScanScreen />
+      case 'report':
+        return <ReportScreen />
+      case 'apply':
+        return <ApplyScreen />
+      case 'history':
+        return <HistoryScreen />
+      default:
+        return <Placeholder />
+    }
+  })()
+
   return (
     <>
-      {route === 'folders' && <FoldersScreen />}
-      {route === 'scan' && <ScanScreen />}
-      {route !== 'folders' && route !== 'scan' && <Placeholder />}
+      {screen}
+      <RecoveryDialog />
       <ErrorToast />
     </>
   )

@@ -14,6 +14,7 @@ CREATE TABLE files (
   session_id TEXT NOT NULL REFERENCES scan_sessions(id) ON DELETE CASCADE,
   root TEXT NOT NULL,
   rel_path TEXT NOT NULL,
+  rel_path_raw TEXT,
   name TEXT NOT NULL,
   ext TEXT NOT NULL,
   kind TEXT NOT NULL,
