@@ -2,6 +2,21 @@
 
 Bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [0.2.0] — 2026-10-15
+
+### Değişti
+- **Konuya göre düzen (varsayılan):** yapay zekâ önce her dosyayı, klasörü ve etkinliği anlar, sonra konu öncelikli bir klasör ağacı kurar (ör. "Aile/Düğün (Haziran 2023)" içinde fotoğraflar, videolar ve davetiye birlikte). Türe göre klasik düzen ayarlardan seçilebilir.
+- Derli toplu klasörler (ses paketi, oyun asset paketi, kurs, albüm) hiçbir zaman bölünmez; bütün olarak taşınır ya da yerinde kalır.
+- Fotoğraf/videolar zamana göre etkinlik olarak gruplanır; çok benzer görseller artık geride kalmaz, grubuyla taşınır.
+- Ekran görüntüleri telefon ve bilgisayar diye ayrılır (iPhone'un `IMG_xxxx.PNG` ekran görüntüleri dahil); ses efektleri müzikten ve sesli notlardan ayrılır.
+- JSON yanıtlar yapılandırılmış çıktıyla alınır (tüm Claude modelleriyle uyumlu).
+
+### Eklendi
+- Model seçimi: Claude Haiku 5.5 / Sonnet 5.5 / Opus 5.5 (fiyatlarıyla), "Diğer…", API'den liste; dosyaları anlamak ve klasör yapısını kurmak için ayrı model.
+- Plan hazırlanırken ilerleme paneli ve **Durdur** ("şimdiye kadarkilerle oluştur" / "tamamen vazgeç").
+- Raporda önerilen klasör ağacı, klasörü yeniden adlandırma/birleştirme (seçimler hatırlanır), etkinlik kartları.
+- Ayarlar › Düzenleme: biçim, mevcut klasörler, ipucu, derinlik, görsellerin buluta gidip gitmeyeceği.
+
 ## [0.1.0] — 2026-10-15
 
 İlk sürüm.

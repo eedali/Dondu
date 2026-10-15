@@ -4,7 +4,7 @@
 
 ## Şu anki faz
 
-**Faz 5 — tamam (v0.1.0)**; sırada: Mac'te gerçek kullanım testi → "Faz 5 düzeltmeleri", sonra Faz 6 (isteğe bağlı)
+**Revizyon 1–3 tamam (v0.2.0, etiketlenmedi)**; sırada: kendi verinizle deneme (Windows + Mac), sonra etiket
 
 ## Yapıldı
 
@@ -21,17 +21,25 @@
 
 - Faz 5 — Paketleme: electron-builder son hâli (logo simgeleri `build/icon.icns|ico`, DMG içinde `OKU-BENİ.txt`, `@napi-rs/canvas` paket dışı), CI (`v*` etiketi → macOS arm64+x64 DMG ad-hoc + `codesign --verify`, Windows NSIS, Release), README kurulum bölümü (Mac xattr / sağ tık Aç, Windows SmartScreen, Denetimli Klasör Erişimi), sürüm 0.1.0 + CHANGELOG. Paketli Windows uygulaması duman testinden geçti (`DONDU_SMOKE_TEST=1`: tara → plan → uygula, 60 dosya, 0 hata).
 
+- **Revizyonlar (kullanıcı geri bildirimi, Windows denemesi sonrası):**
+  - R3 — Plan hazırlığı durdurulabilir: her ekranda ilerleme paneli (aşama, parti, süre, harcanan $) + "Şimdiye kadarkilerle oluştur" / "Tamamen vazgeç"; iptal süren isteklere, geri çekilme beklemesine ve Batch işine ulaşır.
+  - R2 — Model seçimi: Haiku 5.5 / Sonnet 5.5 / Opus 5.5 hazır liste (fiyatlı), "Diğer…", Models API'den liste; dosyaları anlamak ve klasör yapısı için ayrı model. JSON artık yapılandırılmış çıktıyla (Sonnet/Opus zorunlu tool_choice'u reddediyor); Sonnet/Opus'ta sunucu tarafı yedek model.
+  - R1 — Konuya göre düzen: birimler (derli toplu klasörler asla bölünmez, zamana göre etkinlikler, telefon/bilgisayar ekran görüntüsü, ses efekti/müzik/sesli not, oyun asset'i), AI "anla" (başlık/konu/tür) + "klasör mimarı" (konu öncelikli ağaç, mevcut klasörleri ve önceki seçimleri yeniden kullanır), raporda klasör ağacı + yeniden adlandır/birleştir (tercihler hatırlanır) + etkinlik kartları, Ayarlar › Düzenleme. Çok benzer görseller artık geride kalmıyor, grubuyla taşınıyor. AI'sız modda da birimler ve yeni klasörler çalışıyor.
+
 ## Sırada
 
-1. Etiket: `git tag v0.1.0 && git push origin v0.1.0` → GitHub Actions paketleri Release'e yükler
-2. Mac'te gerçek test: DMG → Uygulamalar → `xattr -dr com.apple.quarantine /Applications/Dondu.app` → önce küçük test klasöründe tam akış + geri alma
-3. Bulunan hatalar → "Faz 5 düzeltmeleri"; sonra Faz 6 (Gelen kutusu izleme, OCR, güncelleme, imzalama, fi.json …)
+1. Kendi İndirilenler kopyanızda "Konuya göre" + Claude ile deneme; beğenilmeyen klasör kararlarını raporda düzeltin (hatırlanır)
+2. Etiket: `git tag v0.2.0 && git push origin v0.2.0` → GitHub Actions paketleri Release'e yükler
+3. Mac'te gerçek test: DMG → Uygulamalar → `xattr -dr com.apple.quarantine /Applications/Dondu.app` → önce küçük test klasöründe tam akış + geri alma
+4. Bulunan hatalar → "Faz 5 düzeltmeleri"; sonra Faz 6 (Gelen kutusu izleme, OCR, güncelleme, imzalama, fi.json …)
 
 ## Bilinen sorunlar / açık kararlar
 
 - Arayüz vurgu rengi logodan alındı (kobalt `#3D5AFE`, gece mavisi `#1A1F3A`); `docs/08` güncellendi.
 - macOS derlemesi yalnızca GitHub Actions üzerinde; macOS'ta (ditto, TCC, iCloud yer tutucu, APFS) henüz gerçek makinede denenmedi
 - CI'daki Linux test işi yerelde çalıştırılamadı (Windows geliştirici makinesi); ilk push'ta yeşil olduğu doğrulanmalı
+- Konu düzeni gerçek Claude ile bu makinede denenmedi (API anahtarı yok); iki geçiş sahte sağlayıcıyla test edildi. İstem kalitesi ilk gerçek denemede gözden geçirilmeli
+- Durdurulunca "anla" yarıda kaldıysa klasör mimarı çalışmaz; anlaşılmayanlar kural yerleşimini kullanır
 - Paketli uygulamada pdfjs, kullanılmayan canvas modülü için konsola zararsız uyarılar basıyor
 - Geliştirme araçları (yalnızca paketlenmemiş uygulama): `DONDU_SCREENSHOT=<png>` pencere görüntüsü alıp kapanır; `DONDU_USERDATA=<dir>` ayrı veri klasörü; `DONDU_DEV_ROOTS=<yol>` kökleri ayarlar; `DONDU_AUTOSCAN=1`, `DONDU_AUTOPLAN=1`, `DONDU_AUTOAPPLY=1`, `DONDU_ROUTE=<ekran>`
 - Değişen kaynak dosyalar ön kontrolde yalnızca "atla" ile geçilebiliyor (doc "yine de uygula" seçeneği öneriyor; güvenlik için şimdilik yok)
@@ -43,4 +51,4 @@
 
 ## Son güncelleme
 
-2026-10-15 — Faz 5 tamamlandı (v0.1.0)
+2026-10-15 — Revizyon 1–3 tamamlandı (v0.2.0)

@@ -61,6 +61,8 @@ Büyük ilerleme halkası değil — ince yatay çubuk + iki sayı (bulundu / an
 - Satırda tıkla → sağda detay paneli: büyük thumb/alıntı, meta veri, AI gerekçesi, "Bu türü hep buraya koy" (düzeltme öğrenme).
 - Alt çubuk: "Onayla ve uygula" birincil; yanında "Dışa aktar".
 
+**Revizyon 1:** Rapor solda **önerilen klasör ağacını** gösterir (tıklayınca yalnızca o klasöre gidenler). Grup başlığında "Yeniden adlandır" (klasörü yeniden adlandır / var olan bir yola yazarak birleştir) — seçim konu bazında hatırlanır. Etkinlikler tek kart (başlık, sayı, örnek küçük görseller; açınca dosyalar). Klasör birimleri "Klasör, bütün olarak" rozetiyle tek satır. Plan hazırlanırken her ekranda sağ altta ilerleme paneli ve **Durdur** (Revizyon 3).
+
 ### 4.6 Onay diyaloğu
 Başlık: "Uygulansın mı?" Üç satır: ne yapılacak (sayılar), **"Hiçbir dosya silinmez; her şey geri alınabilir."**, karantina klasörü yolu. Butonlar: Vazgeç / **Uygula**. 500+ öğede ikinci bir "Evet, 1.240 dosya" onayı.
 

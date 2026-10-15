@@ -38,6 +38,8 @@ Adı "Döndü": hem "dosyalar yerine döndü" hem de "yanlış olursa geri dönd
 - Kural motoru (uzantı, ad kalıbı, EXIF, ekran görüntüsü kalıpları) önce çalışır; yapay zekâ **yalnızca** kuralların emin olamadığı veya "zengin analiz" ayarının açık olduğu dosyalar için devreye girer.
 
 ### 4.2 Planlama
+
+> **Revizyon 1 (Ekim 2026):** Klasörler artık **konuya göre** kurulur (Düğün, Oyun Geliştirme, Python Kursu…); bir konu klasöründe fotoğraf, video ve PDF birlikte durabilir. Türe göre klasörler ("Görseller", "Videolar") yalnızca "Türe göre (klasik)" biçiminde ya da yapay zekâ yokken kullanılır. Derli toplu mevcut klasörler (ses paketi, asset paketi, kurs) hiçbir zaman bölünmez; aynı zaman aralığındaki fotoğraf/videolar bir **etkinlik** olarak birlikte taşınır; ekran görüntüleri telefon/bilgisayar diye ayrılır; ses efektleri müzikle karışmaz. Ayrıntı: `03-YAPAY-ZEKA.md` §11.
 - Varsayılan taksonomi (bkz. `06-AYARLAR.md` §Kategoriler) düzenlenebilir; yapay zekâ **kapalı listeden** kategori seçer (serbest metin klasör adı üretmez → tutarlı klasörler).
 - Hedef şeması şablonla: `{Kök}/Belgeler/{Kategori}/{Yıl}`, `{Kök}/Fotoğraflar/{Yıl}/{Ay}` vb. Kullanıcı şablonu değiştirebilir.
 - Hedef modu: (a) her kökün kendi içinde düzenle (varsayılan), (b) hepsini tek bir hedef köke taşı.

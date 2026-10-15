@@ -15,6 +15,15 @@ Zod şeması `src/main/settings/schema.ts` bu dokümandan üretilir; varsayılan
 | `removeEmptyFoldersCreatedByDondu` | bool | `true` | |
 | `quarantineEmptySourceFolders` | bool | `false` | Kullanıcının boş kalan klasörlerini karantinaya al |
 
+## 1.1 Düzenleme (Revizyon 1)
+| Anahtar | Tip | Varsayılan | Açıklama |
+|---|---|---|---|
+| `organize.style` | `'topic'\|'type'` | `topic` | Konuya göre (AI) / Türe göre (klasik). AI yoksa kurallar + birimler |
+| `organize.existingFolders` | `'moveWhole'\|'keep'` | `moveWhole` | Derli toplu klasörler bütün olarak taşınır / yerinde kalır (asla bölünmez) |
+| `organize.hint` | string | `''` | Klasör mimarına ipucu ("oyun geliştiriyorum") |
+| `organize.maxDepth` | int | `3` | En fazla klasör derinliği |
+| `organize.cloudImages` | bool | `true` | Görsel önizlemeleri bulut modele gitsin mi |
+
 ## 2. Tarama
 | Anahtar | Tip | Varsayılan | Açıklama |
 |---|---|---|---|
@@ -36,7 +45,7 @@ Zod şeması `src/main/settings/schema.ts` bu dokümandan üretilir; varsayılan
 | `images.thumbnailMaxEdge` | `512\|768\|1024` | `768` | Token/maliyet ayarı |
 | `images.groupBy` | `'year'\|'yearMonth'\|'event'` | `yearMonth` | `event`: 3 saatten uzun boşluklarda yeni etkinlik |
 | `images.detectScreenshots` | bool | `true` | Ad kalıbı + boyut |
-| `images.screenshotTarget` | string | `Ekran Görüntüleri/{Yıl}` | |
+| `images.screenshotTarget` | string | `Ekran Görüntüleri/{Cihaz}/{Yıl}` | `{Cihaz}` = Telefon / Bilgisayar (Revizyon 1) |
 | `images.nearDuplicateThreshold` | int (hamming) | `8` | dHash |
 | `images.keepHeicJpgSiblingsTogether` | bool | `true` | |
 | `images.useExifDateForFolder` | bool | `true` | EXIF yoksa mtime |

@@ -255,7 +255,12 @@ export function buildPlan(input: PlannerInput): Plan {
 
     // Duplicates → quarantine (exact enabled by default; near duplicates skipped by default).
     const dup = dupOf.get(f.id)
-    if (dup && settings.dupes.action !== 'reportOnly') {
+    // Very similar images (bursts, edits) are NOT left behind: they travel with their group and
+    // are only flagged. Exact copies go to quarantine.
+    if (dup?.kind === 'near') {
+      flags.push('near_duplicate')
+    }
+    if (dup?.kind === 'exact' && settings.dupes.action !== 'reportOnly') {
       const qRoot = quarantineDir(f.root)
       const target = uniquePath(path.join(qRoot, ...f.relPath.split('/')), taken, exists)
       taken.add(pathKey(target))
@@ -424,6 +429,7 @@ export function buildPlan(input: PlannerInput): Plan {
       unitId: unit?.id,
       unitTitle: placement?.title,
       topic: placement?.topic,
+      duplicateOf: dup?.kind === 'near' ? dup.keep.id : undefined,
     })
   }
 

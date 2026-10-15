@@ -99,7 +99,7 @@ export function folderTree(items: PlanItem[]): TreeNode[] {
       rel: c.rel,
       name: c.rel
         ? c.rel.split('/').pop()!
-        : (c.root.split(/[\/]/).filter(Boolean).pop() ?? c.root),
+        : (c.root.split(/[\\/]/).filter(Boolean).pop() ?? c.root),
       depth: c.rel ? c.rel.split('/').length : 0,
       count: c.count,
     }))

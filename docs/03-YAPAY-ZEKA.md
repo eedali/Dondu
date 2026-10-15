@@ -141,3 +141,25 @@ Kullanıcı raporda bir öğenin kategorisini değiştirince `(ext, ad kalıbı,
 | Eşin Mac'i, internet var, gizlilik kaygısı normal | Anthropic Haiku 5.5 + "hassas yerel" (varsayılan) |
 | Çok kişisel içerik / çevrimdışı | LM Studio (görselli model) |
 | Hızlı ilk deneme | Yok (yalnızca kurallar) — zaten %60–70'ini doğru koyar |
+
+## 11. Konuya göre düzen (Revizyon 1)
+
+Hedef: klasörleri dosya türüne değil **konuya** göre kurmak; bir konunun içinde fotoğraf, video, PDF birlikte durabilir.
+
+**Birimler (yerel, ücretsiz — `src/main/core/organize/`):**
+- *Klasör birimi*: adı genel olmayan ("Yeni klasör", "İndirilenler" gibi değil) ve en az 2 dosya içeren mevcut klasör. Hiçbir zaman bölünmez; bütün olarak taşınır ya da yerinde bırakılır. AI "rastgele yığın" derse (`keep_together: false`) dağıtılır ve dosyaları tek tek anlaşılır.
+- *Etkinlik*: EXIF tarihli (ya da kamera adlı) fotoğraf/videolar; 3 saatten uzun boşlukta yeni etkinlik, en az 5 öğe, en fazla 4 gün.
+- *Tekil dosya*: geri kalan her şey.
+- Sinyaller: ekran görüntüsü cihazı (ad + piksel boyutu; dik/uzun = telefon), ses efekti (≤10 sn, etiketsiz, "jump/click…" adları) / sesli not / müzik, oyun asset'i (ad ve uzantı), PNG boyutu IHDR'den.
+
+**Geçiş 1 — Anla** (`docs/prompts/understand-*`, dosya modeli, varsayılan Haiku 5.5, efor düşük): her birim için `title`, `topic` (serbest, Türkçe, aynı konu = aynı yazım), `kind` (kapalı liste, `src/shared/kinds.ts`), `date_hint`, `sensitive`, `keep_together`, güven, gerekçe. Görseller önizlemeyle (etkinlikte en fazla 4 örnek, klasörde 2). Parti: 12 birim (görselli 6, istek başı en fazla 20 görsel).
+
+**Geçiş 2 — Klasör mimarı** (`docs/prompts/organize-*`, düzenleme modeli, varsayılan Sonnet 5.5, efor orta): kök başına; klasör/etkinlik birimleri kendi grubu, tekil dosyalar (tür, konu) ile gruplanır; mevcut klasörler (2 seviye, genel adlar ve birim içleri hariç) ve kullanıcının önceki seçimleri (`folder_prefs`) verilir. Çıktı: klasör listesi + her grubun klasörü (`"."` = yerinde bırak). Yol temizlenir, derinlik `organize.maxDepth` ile sınırlanır, karantina adı reddedilir. 250 gruptan fazlası sıralı parçalara bölünür; sonraki parçalar önceki seçilen klasörleri görür.
+
+**Önbellek:** anla = birim içerik karması + ad + `PROMPT_VERSION` + sağlayıcı/model + görsel açık/kapalı + mod; mimar = istek metninin karması + sürüm + düzenleme modeli. İkinci tarama ücretsiz.
+
+**Gizlilik:** bulut sağlayıcıda hassas dosyalar (adları dahil) hiç gönderilmez; tamamı hassas olan klasör/etkinlik de gönderilmez; klasör özetlerinde hassas dosya adları yer almaz. `organize.cloudImages` kapalıysa görseller buluta gitmez. AI'ın hassas dediği dosya sonraki taramalarda yerelde kalır.
+
+**Maliyet tahmini:** anla geçişi dosya modelinin, mimar düzenleme modelinin fiyatıyla; birim sayısı + görsel sayısı + grup sayısı (≈ birim/3) üzerinden. Yaklaşık: 1.000 dosya ≈ 0,20–0,30 $, 5.000 dosya ≈ 1 $ (Haiku 5.5 + Sonnet 5.5).
+
+**Durdurma (Revizyon 3):** her geçiş iptal edilebilir; durdurulunca anlaşılanlar korunur, mimar çalışmamışsa birimler kural yerleşimini kullanır.

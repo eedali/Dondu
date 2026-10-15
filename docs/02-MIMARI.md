@@ -155,6 +155,8 @@ Preload'da `window.dondu` olarak tiplenmiş API: `dondu.scan.start(roots)`, `don
 - Boyut üst sınırı (varsayılan 200 MB) üstündeki dosyalarda içerik çıkarılmaz; karma yalnızca kopya adayıysa.
 
 ### 6.3 Rules → AI → Planner
+
+> **Revizyon 1:** "Konuya göre" biçimde akış: **birimler** (`core/organize`: derli toplu klasörler, etkinlikler, tekil dosyalar; ekran görüntüsü cihazı, ses efekti/müzik, oyun asset sinyalleri) → **anla** (AI, dosya modeli: başlık, konu, içerik türü) → **klasör mimarı** (AI, düzenleme modeli: konu öncelikli klasör ağacı) → planner (birim yerleşimleri; klasör birimi tek kalem olarak taşınır). AI'ın görmediği birimler kural yerleşimini kullanır. Aşağıdaki 1–4 adımları "Türe göre (klasik)" biçimde geçerlidir.
 1. **Rules** her dosyaya `rule_category` + güven verir (ekran görüntüsü %95, kurulum dosyası %98, EXIF'li fotoğraf %95, fatura kelimesi geçen PDF %70 ...).
 2. Güven ≥ eşik (varsayılan 0,85) ve "zengin analiz" kapalıysa AI'a gitmez.
 3. Kalanlar partiler hâlinde (varsayılan 12 dosya/istek) sağlayıcıya; sonuç önbelleğe.

@@ -245,3 +245,31 @@ describe('planner', () => {
     expect(p.items[0]!.flags).toContain('sensitive')
   })
 })
+
+describe('near duplicates (revision 1)', () => {
+  it('travel with their group instead of being left behind', () => {
+    const s = defaultSettings()
+    const a = file('IMG_1.JPG', { family: 'image', phash: 'ffff0000ffff0000' })
+    const b = file('IMG_2.JPG', { family: 'image', phash: 'ffff0000ffff0001' })
+    const metas = new Map<string, FileMeta>([
+      [a.id, { exifDate: '2023-06-17T15:00:00Z', camera: 'iPhone 14' }],
+      [b.id, { exifDate: '2023-06-17T15:00:02Z', camera: 'iPhone 14' }],
+    ])
+    const p = buildPlan({
+      planId: 'pn',
+      sessionId: 's',
+      roots: [ROOT],
+      files: [a, b],
+      metas,
+      settings: s,
+      categories: DEFAULT_CATEGORIES,
+      now: Date.UTC(2026, 9, 15),
+    })
+    const items = p.items.filter((i) => i.action === 'move')
+    expect(items).toHaveLength(2)
+    expect(new Set(items.map((i) => path.dirname(i.targetPath))).size).toBe(1)
+    const near = items.find((i) => i.flags.includes('near_duplicate'))!
+    expect(near.enabled).toBe(true)
+    expect(near.duplicateOf).toBeDefined()
+  })
+})
