@@ -6,6 +6,8 @@ import { AnthropicProvider } from '../core/ai/anthropic'
 import { FakeProvider } from '../core/ai/fake'
 import { LmStudioProvider } from '../core/ai/lmstudio'
 import { estimateAi, runAi } from '../core/ai/runner'
+import { estimateTopicAi, runTopicAi } from '../core/ai/topic'
+import { organizeWithRules, type Organization } from '../core/organize'
 import { ProviderError, type AIProvider } from '../core/ai/types'
 import { log } from './log'
 
@@ -27,6 +29,7 @@ export function currentProvider(): AIProvider | null {
     return new AnthropicProvider({
       apiKey,
       model: s.ai.anthropic.model,
+      organizerModel: s.ai.anthropic.organizerModel,
       effort: s.ai.anthropic.effort,
       useBatchApi: s.ai.anthropic.useBatchApi,
       categories,
@@ -60,16 +63,56 @@ export async function estimateForSession(sessionId: string): Promise<AIEstimate>
       usd: 0,
       overLimit: false,
     }
+  const settings = ctx.settings.get()
+  const files = ctx.repos.files.bySession(sessionId)
+  const metas = ctx.repos.files.metaBySession(sessionId)
+  if (settings.organize.style === 'topic')
+    return estimateTopicAi(
+      { repos: ctx.repos, provider, settings },
+      organizeWithRules(files, metas, settings),
+      files,
+      metas,
+    )
   return estimateAi(
-    {
-      repos: ctx.repos,
-      provider,
-      settings: ctx.settings.get(),
-      categories: ctx.repos.categories.all(),
-    },
-    ctx.repos.files.bySession(sessionId),
-    ctx.repos.files.metaBySession(sessionId),
+    { repos: ctx.repos, provider, settings, categories: ctx.repos.categories.all() },
+    files,
+    metas,
   )
+}
+
+/** Revision 1: understand units, then design the folder tree (two AI passes). */
+export async function runTopicForSession(
+  sessionId: string,
+  signal: AbortSignal,
+  onProgress: (phase: 'ai' | 'organize', done: number, total: number, usd: number) => void,
+): Promise<{ organization: Organization; summary: Plan['summary']['ai'] } | null> {
+  const ctx = context()
+  const provider = currentProvider()
+  if (!provider) return null
+  const settings = ctx.settings.get()
+  const files = ctx.repos.files.bySession(sessionId)
+  const metas = ctx.repos.files.metaBySession(sessionId)
+  const res = await runTopicAi(
+    { repos: ctx.repos, provider, settings },
+    organizeWithRules(files, metas, settings),
+    files,
+    metas,
+    signal,
+    onProgress,
+  )
+  // AI may flag a file as sensitive (e.g. an ID photo): from now on it stays local.
+  for (const p of res.organization.placements.values()) {
+    const u = res.organization.units.get(p.unitId)
+    if (p.sensitive && u?.type === 'file')
+      ctx.repos.files.update(u.memberIds[0]!, {
+        sensitive: true,
+        sensitiveReason: 'yapay zekâ işaretledi',
+      })
+  }
+  log.info(
+    `topic ai ${provider.id}/${provider.model}+${provider.organizerModel} units=${res.summary.files} in=${res.summary.tokensIn} out=${res.summary.tokensOut} usd=${res.summary.usd.toFixed(4)} failed=${res.summary.failedBatches}`,
+  )
+  return res
 }
 
 export async function runAiForSession(

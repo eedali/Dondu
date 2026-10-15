@@ -236,7 +236,7 @@ export function buildPlan(input: PlannerInput): Plan {
       }
     let d = decide(rule, input.ai?.get(f.id), validCats)
     const aiOut = input.ai?.get(f.id)
-    const sensitive = f.sensitive || !!aiOut?.sensitive
+    const sensitive = f.sensitive || !!aiOut?.sensitive || !!placementOf(f)?.sensitive
     if (sensitive) {
       flags.push('sensitive')
       const target = validCats.has(settings.sensitive.targetCategory)

@@ -2,7 +2,14 @@ import type { AIClassifyInput, Category } from '@shared/types'
 import type { Correction } from '../../db/repos'
 import { parseResults, renderBatchText } from './input'
 import { CLASSIFY_TOOL, systemPrompt } from './prompt'
-import { ProviderError, RetryableError, type AIProvider, type ClassifyResult } from './types'
+import {
+  ProviderError,
+  RetryableError,
+  type AIProvider,
+  type ClassifyResult,
+  type JsonRequest,
+  type JsonResult,
+} from './types'
 
 export interface LmStudioOptions {
   baseUrl: string
@@ -32,8 +39,73 @@ export class LmStudioProvider implements AIProvider {
     this.system = systemPrompt(o.categories, o.corrections)
   }
 
+  /** One local model does both passes. */
+  get organizerModel(): string {
+    return this.model
+  }
+
   private url(p: string): string {
     return `${this.o.baseUrl.replace(/\/+$/, '')}${p}`
+  }
+
+  /** Chat completion constrained to a JSON schema; returns the parsed object (revision 1). */
+  async json(req: JsonRequest, signal: AbortSignal): Promise<JsonResult> {
+    const images = this.supportsVision ? (req.images ?? []) : []
+    const user = images.length
+      ? [
+          { type: 'text', text: req.text },
+          ...images.flatMap((i) => [
+            { type: 'text', text: i.label },
+            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${i.base64}` } },
+          ]),
+        ]
+      : req.text
+    const r = await this.req(
+      '/chat/completions',
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: this.model,
+          messages: [
+            { role: 'system', content: req.system },
+            { role: 'user', content: user },
+          ],
+          response_format: {
+            type: 'json_schema',
+            json_schema: { name: req.pass, strict: true, schema: req.schema },
+          },
+          stream: false,
+        }),
+      },
+      signal,
+    )
+    if (r.status === 429 || r.status >= 500) throw new RetryableError(`LM Studio HTTP ${r.status}`)
+    if (!r.ok)
+      throw new ProviderError(
+        `LM Studio HTTP ${r.status}: ${(await r.text()).slice(0, 200)}`,
+        'bad_response',
+      )
+    const j = (await r.json()) as {
+      choices?: { message?: { content?: string } }[]
+      usage?: { prompt_tokens?: number; completion_tokens?: number }
+    }
+    const text = j.choices?.[0]?.message?.content ?? ''
+    let json: unknown
+    try {
+      json = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1))
+    } catch {
+      throw new ProviderError('LM Studio yanıtı geçerli JSON değil.', 'bad_response')
+    }
+    return {
+      json,
+      usage: {
+        tokensIn: j.usage?.prompt_tokens ?? 0,
+        tokensOut: j.usage?.completion_tokens ?? 0,
+        cacheWrite: 0,
+        cacheRead: 0,
+      },
+    }
   }
 
   private async req(path: string, init: RequestInit, signal?: AbortSignal): Promise<Response> {

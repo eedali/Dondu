@@ -10,6 +10,8 @@ import {
   RetryableError,
   type AIProvider,
   type ClassifyResult,
+  type JsonRequest,
+  type JsonResult,
   type Usage,
 } from './types'
 import { abortableSleep, toStructuredSchema } from './util'
@@ -18,6 +20,8 @@ export interface AnthropicOptions {
   apiKey: string
   /** Model that looks at files (cheap, vision). */
   model: string
+  /** Model that designs the folder tree (revision 1). Defaults to `model`. */
+  organizerModel?: string
   effort: 'low' | 'medium'
   useBatchApi: boolean
   categories: Category[]
@@ -66,11 +70,13 @@ export class AnthropicProvider implements AIProvider {
   readonly batchSize = 12
   readonly concurrency = 3
   readonly model: string
+  readonly organizerModel: string
   protected client: Anthropic
   private system: string
 
   constructor(protected o: AnthropicOptions) {
     this.model = o.model
+    this.organizerModel = o.organizerModel || o.model
     this.client = new Anthropic({
       apiKey: o.apiKey,
       maxRetries: o.maxRetries ?? 2,
@@ -228,6 +234,33 @@ export class AnthropicProvider implements AIProvider {
       prices: pricesFor(this.model),
     })
     return { tokensIn: r.tokensIn, tokensOut: r.tokensOut, usd: r.usd }
+  }
+
+  /** Request body for a revision-1 pass (exported for tests). */
+  jsonRequestParams(req: JsonRequest): Anthropic.MessageCreateParamsNonStreaming {
+    const content: Anthropic.ContentBlockParam[] = []
+    for (const img of req.images ?? []) {
+      content.push({ type: 'text', text: img.label })
+      content.push({
+        type: 'image',
+        source: { type: 'base64', media_type: 'image/jpeg', data: img.base64 },
+      })
+    }
+    content.push({ type: 'text', text: req.text })
+    const organize = req.pass === 'organize'
+    return this.jsonParams({
+      model: organize ? this.organizerModel : this.model,
+      // The architect weighs the whole tree: a little more effort pays off there.
+      effort: organize ? 'medium' : this.o.effort,
+      system: req.system,
+      content,
+      schema: req.schema,
+      maxTokens: req.maxTokens,
+    })
+  }
+
+  async json(req: JsonRequest, signal: AbortSignal): Promise<JsonResult> {
+    return this.parseJson(await this.send(this.jsonRequestParams(req), signal))
   }
 
   async classify(batch: AIClassifyInput[], signal: AbortSignal): Promise<ClassifyResult> {

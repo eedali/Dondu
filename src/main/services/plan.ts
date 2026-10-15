@@ -7,7 +7,7 @@ import { context } from '../context'
 import { exportHtml, exportJson, exportMarkdown } from '../core/planner/export'
 import { planFromSession } from '../core/planner/session'
 import { emit } from '../ipc/registry'
-import { runAiForSession } from './ai'
+import { runAiForSession, runTopicForSession } from './ai'
 import { log } from './log'
 
 /** The plan build in progress (one at a time). */
@@ -49,12 +49,25 @@ export async function buildPlanForSession(sessionId: string, useAI: boolean): Pr
   try {
     progress({ phase: 'rules', done: 0, total: 1 })
     let ai: Awaited<ReturnType<typeof runAiForSession>> | undefined
+    let topic: Awaited<ReturnType<typeof runTopicForSession>> | undefined
     if (useAI && settings.ai.provider !== 'none') {
       try {
-        ai = await runAiForSession(sessionId, current.controller.signal, (done, total, usd) => {
-          current.usd = usd
-          progress({ phase: 'ai', done, total })
-        })
+        if (settings.organize.style === 'topic') {
+          // Revision 1: understand → design folders. A stop keeps what is done; the rest uses rules.
+          topic = await runTopicForSession(
+            sessionId,
+            current.controller.signal,
+            (phase, done, total, usd) => {
+              current.usd = usd
+              progress({ phase, done, total })
+            },
+          )
+        } else {
+          ai = await runAiForSession(sessionId, current.controller.signal, (done, total, usd) => {
+            current.usd = usd
+            progress({ phase: 'ai', done, total })
+          })
+        }
       } catch (e) {
         if (current.mode === 'abort') throw new PlanCancelled()
         // AI problems never block planning: rules still produce a plan (docs/01 §8).
@@ -66,7 +79,14 @@ export async function buildPlanForSession(sessionId: string, useAI: boolean): Pr
     }
     if (current.mode === 'abort') throw new PlanCancelled()
     progress({ phase: 'planning', done: 0, total: 1 })
-    const plan = planFromSession(ctx.repos, sessionId, settings, ai?.results, ai?.summary)
+    const plan = planFromSession(
+      ctx.repos,
+      sessionId,
+      settings,
+      ai?.results,
+      ai?.summary ?? topic?.summary,
+      topic?.organization,
+    )
     progress({ phase: 'done', done: 1, total: 1 })
     log.info(
       `plan ${plan.id} items=${plan.items.length} move=${plan.summary.move}${current.mode === 'partial' ? ' (stopped early)' : ''}`,

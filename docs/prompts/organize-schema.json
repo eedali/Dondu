@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["folders", "placements"],
+  "properties": {
+    "folders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "purpose"],
+        "properties": {
+          "path": { "type": "string", "maxLength": 200 },
+          "purpose": { "type": "string", "maxLength": 120 }
+        }
+      }
+    },
+    "placements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["group", "folder", "reason"],
+        "properties": {
+          "group": { "type": "string" },
+          "folder": { "type": "string", "maxLength": 200 },
+          "reason": { "type": "string", "maxLength": 200 }
+        }
+      }
+    }
+  }
+}

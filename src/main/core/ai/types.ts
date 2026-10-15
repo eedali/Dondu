@@ -9,6 +9,21 @@ export interface Usage {
   cacheRead: number
 }
 
+/** Revision 1: a generic JSON request (understanding pass or folder-architect pass). */
+export interface JsonRequest {
+  pass: 'understand' | 'organize'
+  system: string
+  text: string
+  images?: { label: string; base64: string }[]
+  schema: unknown
+  maxTokens: number
+}
+
+export interface JsonResult {
+  json: unknown
+  usage: Usage
+}
+
 export interface ClassifyResult {
   results: AIClassifyOutput[]
   usage: Usage
@@ -18,6 +33,8 @@ export interface ClassifyResult {
 export interface AIProvider {
   readonly id: ProviderId
   readonly model: string
+  /** Model used for the folder-architect pass (may be smarter than `model`). */
+  readonly organizerModel: string
   readonly supportsVision: boolean
   /** Cloud providers must never receive sensitive files (golden rule 6). */
   readonly isCloud: boolean
@@ -27,6 +44,8 @@ export interface AIProvider {
   test(): Promise<{ ok: boolean; message: string; model?: string }>
   estimate(batch: AIClassifyInput[]): { tokensIn: number; tokensOut: number; usd: number }
   classify(batch: AIClassifyInput[], signal: AbortSignal): Promise<ClassifyResult>
+  /** Revision 1 passes. */
+  json(req: JsonRequest, signal: AbortSignal): Promise<JsonResult>
   /** Optional asynchronous bulk mode (Anthropic Message Batches, 50% cheaper). */
   classifyMany?(
     batches: AIClassifyInput[][],

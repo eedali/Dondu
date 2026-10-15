@@ -19,6 +19,8 @@ export interface Placement {
   source: 'rule' | 'ai'
   /** Folder units: leave the folder exactly where it is. */
   keepInPlace?: boolean
+  /** The AI judged it sensitive (ID photo …): it stays local from now on. */
+  sensitive?: boolean
 }
 
 export interface Organization {
