@@ -25,18 +25,34 @@ jobs:
       - run: npm run lint
       - run: npm test
 
-  # Paketleme: yalnızca etiketle (v0.1.0 gibi) veya elle tetiklenince.
+  # Etiket (v0.2.0 gibi) gelince önce boş bir Release açılır; paket işleri dosyaları
+  # doğrudan ona yükler. Böylece Actions "artifact" depolama kotası hiç kullanılmaz.
+  release:
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Create GitHub Release
+        run: |
+          gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1             || gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes --title "Döndü $GITHUB_REF_NAME"
+
+  # Paketleme: yalnızca etiketle veya elle tetiklenince.
   # macOS paketi Windows'ta üretilemez; bu iş onu GitHub'ın Mac runner'ında yapar.
   package:
-    needs: check
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    needs: [check, release]
+    if: >-
+      always() && needs.check.result == 'success' &&
+      (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch')
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
-      # Sertifika yok: electron-builder imza aramasın (macOS'ta ad-hoc imza kalır)
+      # Sertifika yok: electron-builder imza aramasın; macOS'ta ad-hoc imzayı
+      # build/after-pack.cjs atar.
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -46,36 +62,29 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
       - name: Package (electron-builder)
         run: npm run package -- --publish never
       - name: Verify ad-hoc signature (macOS)
         if: runner.os == 'macOS'
         run: |
-          APP=$(find dist -maxdepth 3 -name "*.app" | head -n 1)
-          echo "Verifying $APP"
-          codesign --verify --deep --strict --verbose=2 "$APP" || (echo "::error::codesign verify failed" && exit 1)
+          set -e
+          for APP in $(find dist -maxdepth 2 -name "*.app"); do
+            echo "Verifying $APP"
+            codesign --verify --deep --strict --verbose=2 "$APP"
+          done
+      - name: Upload to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          shopt -s nullglob
+          gh release upload "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --clobber             dist/*.dmg dist/*.exe dist/*.blockmap dist/latest*.yml
+      # Elle tetiklenince (etiketsiz) dosyalar kısa süreli artifact olarak kalır.
       - uses: actions/upload-artifact@v4
+        if: "!startsWith(github.ref, 'refs/tags/v')"
         with:
           name: dondu-${{ runner.os }}
+          retention-days: 3
           if-no-files-found: error
           path: |
             dist/*.dmg
-            dist/*.zip
             dist/*.exe
-            dist/*.blockmap
-            dist/latest*.yml
-
-  release:
-    needs: package
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: artifacts/**/*
-          generate_release_notes: true

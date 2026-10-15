@@ -4,7 +4,7 @@
 
 ## Şu anki faz
 
-**Revizyon 1–3 tamam (v0.2.0, etiketlenmedi)**; sırada: kendi verinizle deneme (Windows + Mac), sonra etiket
+**Revizyon 1–3 tamam (v0.2.0 etiketlendi)**; sırada: kendi verinizle deneme (Windows + Mac)
 
 ## Yapıldı
 
@@ -29,7 +29,7 @@
 ## Sırada
 
 1. Kendi İndirilenler kopyanızda "Konuya göre" + Claude ile deneme; beğenilmeyen klasör kararlarını raporda düzeltin (hatırlanır)
-2. Etiket: `git tag v0.2.0 && git push origin v0.2.0` → GitHub Actions paketleri Release'e yükler
+2. Yeni sürüm: `package.json` sürümünü artır → PowerShell'de `git tag vX.Y.Z; git push origin vX.Y.Z` → CI paketleri doğrudan Release'e yükler
 3. Mac'te gerçek test: DMG → Uygulamalar → `xattr -dr com.apple.quarantine /Applications/Dondu.app` → önce küçük test klasöründe tam akış + geri alma
 4. Bulunan hatalar → "Faz 5 düzeltmeleri"; sonra Faz 6 (Gelen kutusu izleme, OCR, güncelleme, imzalama, fi.json …)
 
@@ -40,6 +40,7 @@
 - CI'daki Linux test işi yerelde çalıştırılamadı (Windows geliştirici makinesi); ilk push'ta yeşil olduğu doğrulanmalı
 - Konu düzeni gerçek Claude ile bu makinede denenmedi (API anahtarı yok); iki geçiş sahte sağlayıcıyla test edildi. İstem kalitesi ilk gerçek denemede gözden geçirilmeli
 - Durdurulunca "anla" yarıda kaldıysa klasör mimarı çalışmaz; anlaşılmayanlar kural yerleşimini kullanır
+- CI: `mac.identity: null` imzayı tamamen kapatıyordu; ad-hoc imza artık `build/after-pack.cjs`'de. Etiketli derlemeler artifact kotası yerine doğrudan Release'e yüklenir (özel depo, 500 MB kota)
 - Paketli uygulamada pdfjs, kullanılmayan canvas modülü için konsola zararsız uyarılar basıyor
 - Geliştirme araçları (yalnızca paketlenmemiş uygulama): `DONDU_SCREENSHOT=<png>` pencere görüntüsü alıp kapanır; `DONDU_USERDATA=<dir>` ayrı veri klasörü; `DONDU_DEV_ROOTS=<yol>` kökleri ayarlar; `DONDU_AUTOSCAN=1`, `DONDU_AUTOPLAN=1`, `DONDU_AUTOAPPLY=1`, `DONDU_ROUTE=<ekran>`
 - Değişen kaynak dosyalar ön kontrolde yalnızca "atla" ile geçilebiliyor (doc "yine de uygula" seçeneği öneriyor; güvenlik için şimdilik yok)

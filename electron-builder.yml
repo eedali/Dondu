@@ -72,5 +72,6 @@ linux:
   executableName: dondu
   target: [dir]
 
+afterPack: build/after-pack.cjs
 npmRebuild: true
 publish: null
